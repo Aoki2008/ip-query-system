@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用指南 - IP查询工具</title>
+    <meta name="description" content="IP查询工具详细使用指南，帮助您快速掌握各项功能">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="icon" type="image/svg+xml" sizes="16x16" href="assets/favicon-16x16.svg">
+    <link rel="icon" type="image/svg+xml" sizes="32x32" href="assets/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="assets/logo.svg" alt="IP查询工具" width="40" height="40">
+                </div>
+                <div class="site-title">
+                    <h1>IP查询工具</h1>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">🏠 首页</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">🛠️ 工具箱 <span class="dropdown-arrow">▼</span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="ip-lookup.html">🔍 IP查询</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle active">❓ 使用帮助 <span class="dropdown-arrow">▼</span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="guide.html" class="active">📖 使用指南</a></li>
+                            <li><a href="faq.html">❓ 常见问题</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="about.html">ℹ️ 关于我们</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="content-container">
+                <h2>📖 使用指南</h2>
+                <div class="guide-content">
+                    <section class="guide-section">
+                        <h3>🚀 快速开始</h3>
+                        <p>欢迎使用IP查询工具！本工具提供专业的IP地址查询服务，帮助您快速获取IP地址的详细信息。</p>
+                        
+                        <h4>基本功能</h4>
+                        <ul>
+                            <li><strong>单个查询</strong>：输入单个IP地址进行查询</li>
+                            <li><strong>批量查询</strong>：同时查询多个IP地址</li>
+                            <li><strong>查询历史</strong>：查看和管理历史查询记录</li>
+                        </ul>
+                    </section>
+
+                    <section class="guide-section">
+                        <h3>🔍 如何使用IP查询功能</h3>
+                        
+                        <h4>单个IP查询</h4>
+                        <ol>
+                            <li>访问首页或点击"工具箱 → IP查询"</li>
+                            <li>在输入框中输入要查询的IP地址（如：8.8.8.8）</li>
+                            <li>点击"查询"按钮</li>
+                            <li>查看详细的查询结果</li>
+                        </ol>
+
+                        <h4>批量IP查询</h4>
+                        <ol>
+                            <li>在首页选择"批量查询"标签</li>
+                            <li>在文本框中输入多个IP地址，每行一个</li>
+                            <li>或者点击"导入文件"上传包含IP地址的文件</li>
+                            <li>点击"批量查询"按钮开始查询</li>
+                            <li>查看批量查询结果，支持导出为多种格式</li>
+                        </ol>
+                    </section>
+
+                    <section class="guide-section">
+                        <h3>📊 查询结果说明</h3>
+                        <p>查询结果包含以下信息：</p>
+                        <ul>
+                            <li><strong>IP地址</strong>：查询的目标IP地址</li>
+                            <li><strong>地理位置</strong>：国家、省份、城市信息</li>
+                            <li><strong>ISP信息</strong>：互联网服务提供商</li>
+                            <li><strong>时区</strong>：所在时区信息</li>
+                            <li><strong>坐标</strong>：经纬度坐标（如果可用）</li>
+                        </ul>
+                    </section>
+
+                    <section class="guide-section">
+                        <h3>🎨 界面功能</h3>
+                        
+                        <h4>主题切换</h4>
+                        <p>点击右上角的主题切换按钮（🌙/☀️）可以在深色和浅色主题之间切换。</p>
+                        
+                        <h4>响应式设计</h4>
+                        <p>本工具支持各种设备，包括桌面电脑、平板和手机，界面会自动适配不同屏幕尺寸。</p>
+                    </section>
+
+                    <section class="guide-section">
+                        <h3>💡 使用技巧</h3>
+                        <ul>
+                            <li>支持IPv4地址格式，如：192.168.1.1、8.8.8.8等</li>
+                            <li>批量查询最多支持100个IP地址</li>
+                            <li>查询历史会自动保存最近的查询记录</li>
+                            <li>可以使用示例IP功能快速体验查询效果</li>
+                            <li>支持拖拽文件到批量查询区域进行导入</li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>IP查询工具 © 2024 版权所有 | 现代化网络工具</p>
+                <p><a href="http://beian.miit.gov.cn/">京ICP备12345678号</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

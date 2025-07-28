@@ -6,127 +6,242 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+
 jobs:
-  # 基础检查
-  basic-checks:
+  # 代码质量检查
+  code-quality:
     runs-on: ubuntu-latest
-    name: Basic Checks
+    name: Code Quality Check
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install Python dependencies
+      run: |
+        cd API
+        python -m pip install --upgrade pip
+        pip install flake8 black isort mypy
+        pip install -r requirements.txt
+    
+    - name: Python code formatting check
+      run: |
+        cd API
+        black --check --diff .
+        isort --check-only --diff .
+    
+    - name: Python linting
+      run: |
+        cd API
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Type checking
+      run: |
+        cd API
+        mypy . --ignore-missing-imports || true
 
-    - name: Setup Node.js
+  # 后端测试
+  backend-tests:
+    runs-on: ubuntu-latest
+    name: Backend Tests
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('API/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        cd API
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Create test GeoIP database
+      run: |
+        cd API
+        echo "fake_geoip_data" > GeoLite2-City.mmdb
+    
+    - name: Run tests with coverage
+      env:
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        TESTING: true
+      run: |
+        cd API
+        python -m pytest ../tests/ -v --cov=. --cov-report=xml --cov-report=html
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./API/coverage.xml
+        flags: backend
+        name: backend-coverage
+
+  # 前端测试
+  frontend-tests:
+    runs-on: ubuntu-latest
+    name: Frontend Tests
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
-
-    - name: Check project structure
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: frontend-vue3/package-lock.json
+    
+    - name: Install dependencies
       run: |
-        echo "检查项目结构..."
-        ls -la
-        echo "检查API系统..."
-        ls -la api-system/ || echo "API系统目录不存在"
-        echo "检查前端应用..."
-        ls -la ip-tool/ || echo "前端应用目录不存在"
-        echo "检查管理后台..."
-        ls -la admin-panel/ || echo "管理后台目录不存在"
-
-    - name: Validate Docker Compose
+        cd frontend-vue3
+        npm ci
+    
+    - name: Run linting
       run: |
-        if [ -f "docker-compose.yml" ]; then
-          echo "验证Docker Compose配置..."
-          docker-compose config
-        else
-          echo "docker-compose.yml文件不存在"
-        fi
+        cd frontend-vue3
+        npm run lint || true
+    
+    - name: Run type checking
+      run: |
+        cd frontend-vue3
+        npm run type-check || true
+    
+    - name: Run unit tests
+      run: |
+        cd frontend-vue3
+        npm run test:unit || true
+    
+    - name: Build application
+      run: |
+        cd frontend-vue3
+        npm run build
 
-  # API服务检查
-  api-check:
+  # 安全扫描
+  security-scan:
     runs-on: ubuntu-latest
-    name: API Service Check
+    name: Security Scan
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
       with:
-        node-version: '18'
-
-    - name: Check API dependencies
-      run: |
-        if [ -f "api-system/package.json" ]; then
-          cd api-system
-          echo "检查API依赖..."
-          npm ci --dry-run || echo "依赖安装可能有问题"
-        else
-          echo "API系统package.json不存在"
-        fi
-
-  # 前端应用检查
-  frontend-check:
-    runs-on: ubuntu-latest
-    name: Frontend Check
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
     
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
       with:
-        node-version: '18'
+        sarif_file: 'trivy-results.sarif'
 
-    - name: Check Frontend dependencies
-      run: |
-        if [ -f "ip-tool/package.json" ]; then
-          cd ip-tool
-          echo "检查前端依赖..."
-          npm ci --dry-run || echo "依赖安装可能有问题"
-        else
-          echo "前端应用package.json不存在"
-        fi
-
-  # 管理后台检查
-  admin-check:
+  # Docker构建测试
+  docker-build:
     runs-on: ubuntu-latest
-    name: Admin Panel Check
+    name: Docker Build Test
+    needs: [backend-tests, frontend-tests]
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Create test GeoIP database
+      run: |
+        echo "fake_geoip_data" > API/GeoLite2-City.mmdb
+    
+    - name: Build backend Docker image
+      uses: docker/build-push-action@v5
       with:
-        php-version: '8.1'
-
-    - name: Check Admin dependencies
+        context: ./API
+        file: ./API/Dockerfile
+        push: false
+        tags: ip-query-backend:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Build frontend Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend-vue3
+        file: ./frontend-vue3/Dockerfile
+        push: false
+        tags: ip-query-frontend:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Test docker-compose
       run: |
-        if [ -f "admin-panel/composer.json" ]; then
-          cd admin-panel
-          echo "检查管理后台依赖..."
-          composer validate || echo "Composer配置可能有问题"
-        else
-          echo "管理后台composer.json不存在"
-        fi
+        # 创建测试用的docker-compose文件
+        cp docker-compose.yml docker-compose.test.yml
+        # 使用本地构建的镜像
+        sed -i 's/build:/image: ip-query-backend:test #build:/' docker-compose.test.yml
+        # 验证配置文件
+        docker-compose -f docker-compose.test.yml config
 
-  # 文档检查
-  docs-check:
+  # 部署到测试环境
+  deploy-staging:
     runs-on: ubuntu-latest
-    name: Documentation Check
+    name: Deploy to Staging
+    needs: [code-quality, backend-tests, frontend-tests, docker-build]
+    if: github.ref == 'refs/heads/develop'
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Check documentation
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to staging
       run: |
-        echo "检查文档文件..."
-        [ -f "README.md" ] && echo "✓ README.md存在" || echo "✗ README.md缺失"
-        [ -f "LICENSE" ] && echo "✓ LICENSE存在" || echo "✗ LICENSE缺失"
-        [ -f "CONTRIBUTING.md" ] && echo "✓ CONTRIBUTING.md存在" || echo "✗ CONTRIBUTING.md缺失"
-        [ -d "docs/" ] && echo "✓ docs目录存在" || echo "✗ docs目录缺失"
-        [ -d "deploy/" ] && echo "✓ deploy目录存在" || echo "✗ deploy目录缺失"
+        echo "Deploying to staging environment..."
+        # 这里可以添加实际的部署脚本
+        # 例如：部署到测试服务器、更新Kubernetes配置等
+
+  # 部署到生产环境
+  deploy-production:
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    needs: [code-quality, backend-tests, frontend-tests, docker-build]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production environment..."
+        # 这里可以添加实际的生产部署脚本

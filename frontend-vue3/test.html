@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP查询工具 - 测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+        }
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+        .api-status {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 IP查询工具</h1>
+        
+        <div class="api-status">
+            <h3>API服务状态</h3>
+            <p>后端API: <span id="backend-status">检查中...</span></p>
+            <p>异步API: <span id="async-status">检查中...</span></p>
+        </div>
+        
+        <div class="form-group">
+            <label for="ip-input">输入IP地址:</label>
+            <input type="text" id="ip-input" placeholder="例如: 8.8.8.8" value="8.8.8.8">
+        </div>
+        
+        <button onclick="queryIP()">查询IP信息</button>
+        
+        <div id="result" class="result">
+            <h3>查询结果:</h3>
+            <div id="result-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // 检查API状态
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/api/health');
+                const data = await response.json();
+                document.getElementById('backend-status').innerHTML = '✅ 正常运行';
+            } catch (error) {
+                document.getElementById('backend-status').innerHTML = '❌ 连接失败';
+            }
+            
+            try {
+                const response = await fetch('http://localhost:5001/api/health');
+                const data = await response.json();
+                document.getElementById('async-status').innerHTML = '✅ 正常运行';
+            } catch (error) {
+                document.getElementById('async-status').innerHTML = '❌ 连接失败';
+            }
+        }
+        
+        // 查询IP
+        async function queryIP() {
+            const ip = document.getElementById('ip-input').value;
+            const resultDiv = document.getElementById('result');
+            const resultContent = document.getElementById('result-content');
+            
+            if (!ip) {
+                alert('请输入IP地址');
+                return;
+            }
+            
+            resultContent.innerHTML = '查询中...';
+            resultDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/query-ip?ip=${ip}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.data;
+                    resultContent.innerHTML = `
+                        <p><strong>IP地址:</strong> ${result.ip}</p>
+                        <p><strong>国家:</strong> ${result.country}</p>
+                        <p><strong>地区:</strong> ${result.region}</p>
+                        <p><strong>城市:</strong> ${result.city}</p>
+                        <p><strong>时区:</strong> ${result.timezone}</p>
+                        <p><strong>经纬度:</strong> ${result.latitude}, ${result.longitude}</p>
+                    `;
+                } else {
+                    resultContent.innerHTML = `<p style="color: #ff6b6b;">查询失败: ${data.message}</p>`;
+                }
+            } catch (error) {
+                resultContent.innerHTML = `<p style="color: #ff6b6b;">网络错误: ${error.message}</p>`;
+            }
+        }
+        
+        // 页面加载时检查API状态
+        window.onload = function() {
+            checkAPIStatus();
+        };
+        
+        // 回车键查询
+        document.getElementById('ip-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                queryIP();
+            }
+        });
+    </script>
+</body>
+</html>

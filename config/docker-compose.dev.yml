@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # Redis缓存服务
+  redis:
+    image: redis:7-alpine
+    container_name: ip-query-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - dev-network
+
+  # FastAPI后端服务（开发模式）
+  backend-fastapi-dev:
+    build:
+      context: ./backend-fastapi
+      dockerfile: Dockerfile
+    container_name: ip-query-backend-fastapi-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=true
+      - RELOAD=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_ENABLED=true
+      - LOG_LEVEL=DEBUG
+      - LOG_FORMAT=console
+    volumes:
+      - ./backend-fastapi:/app
+      - ./backend-fastapi/data:/app/data:ro
+    depends_on:
+      - redis
+    networks:
+      - dev-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # 前端开发服务（可选，通常使用npm run dev）
+  frontend-dev:
+    build:
+      context: ./frontend-vue3
+      dockerfile: Dockerfile
+    container_name: ip-query-frontend-dev
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend-fastapi-dev
+    networks:
+      - dev-network
+
+volumes:
+  redis_dev_data:
+    driver: local
+
+networks:
+  dev-network:
+    driver: bridge

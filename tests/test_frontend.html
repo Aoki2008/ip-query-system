@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端API测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 前端API连接测试</h1>
+    
+    <div class="test-section">
+        <h2>🔍 API健康检查</h2>
+        <button onclick="testHealth()">测试健康检查</button>
+        <div id="health-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎯 单个IP查询测试</h2>
+        <input type="text" id="single-ip" placeholder="输入IP地址" value="8.8.8.8">
+        <button onclick="testSingleQuery()">查询IP</button>
+        <div id="single-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 批量IP查询测试</h2>
+        <textarea id="batch-ips" rows="4" cols="50" placeholder="每行一个IP地址">8.8.8.8
+114.114.114.114
+1.1.1.1</textarea><br>
+        <button onclick="testBatchQuery()">批量查询</button>
+        <div id="batch-result"></div>
+    </div>
+
+    <script>
+        // API配置
+        const API_CONFIG = {
+            baseURL: 'http://localhost:5000/api',
+            endpoints: {
+                queryIP: '/query-ip',
+                queryBatch: '/query-batch',
+                health: '/health'
+            }
+        };
+
+        function showResult(elementId, content, isError = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${isError ? 'error' : 'success'}">${content}</div>`;
+        }
+
+        async function testHealth() {
+            try {
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.health}`);
+                const data = await response.json();
+                showResult('health-result', `✅ 健康检查成功: ${data.message}`);
+            } catch (error) {
+                showResult('health-result', `❌ 健康检查失败: ${error.message}`, true);
+            }
+        }
+
+        async function testSingleQuery() {
+            const ip = document.getElementById('single-ip').value.trim();
+            if (!ip) {
+                showResult('single-result', '❌ 请输入IP地址', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.queryIP}?ip=${ip}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    showResult('single-result', `❌ 查询失败: ${data.error}`, true);
+                } else {
+                    const result = `
+                        ✅ 查询成功:<br>
+                        IP: ${data.ip}<br>
+                        国家: ${data.country}<br>
+                        地区: ${data.region}<br>
+                        城市: ${data.city}<br>
+                        ISP: ${data.isp}<br>
+                        时区: ${data.timezone}
+                    `;
+                    showResult('single-result', result);
+                }
+            } catch (error) {
+                showResult('single-result', `❌ 网络错误: ${error.message}`, true);
+            }
+        }
+
+        async function testBatchQuery() {
+            const ipsText = document.getElementById('batch-ips').value.trim();
+            if (!ipsText) {
+                showResult('batch-result', '❌ 请输入IP地址', true);
+                return;
+            }
+
+            const ips = ipsText.split('\n').map(ip => ip.trim()).filter(ip => ip);
+            
+            try {
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.queryBatch}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ips: ips })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    showResult('batch-result', `❌ 批量查询失败: ${data.error}`, true);
+                } else {
+                    let result = `✅ 批量查询成功 (共${data.total}个IP):<br><br>`;
+                    data.results.forEach(item => {
+                        result += `${item.ip}: ${item.country} - ${item.city}<br>`;
+                    });
+                    showResult('batch-result', result);
+                }
+            } catch (error) {
+                showResult('batch-result', `❌ 网络错误: ${error.message}`, true);
+            }
+        }
+
+        // 页面加载时自动测试健康检查
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>

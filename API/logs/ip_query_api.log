@@ -1,0 +1,415 @@
+2025-07-29 22:35:31,211 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:35:31,213 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 22:35:31,449 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:35:31,451 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 22:36:22,535 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.19041.6093
+2025-07-29 22:36:22,535 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 22:36:22,536 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 22:37:55,258 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:37:55,259 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:37:55,259 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共4个有效IP，开始异步查询
+2025-07-29 22:37:55,367 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功4个
+2025-07-29 22:37:55,368 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.110s
+2025-07-29 22:38:09,125 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:38:09,125 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:38:09,125 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共3个有效IP，开始异步查询
+2025-07-29 22:38:09,126 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功3个
+2025-07-29 22:38:09,126 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-29 22:38:11,668 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:38:11,668 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:38:11,668 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共3个有效IP，开始异步查询
+2025-07-29 22:38:11,669 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功3个
+2025-07-29 22:38:11,669 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.001s
+2025-07-29 22:38:14,219 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:38:14,220 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:38:14,220 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共3个有效IP，开始异步查询
+2025-07-29 22:38:14,220 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功3个
+2025-07-29 22:38:14,220 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-29 22:41:47,859 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:41:47,861 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 22:42:09,178 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:42:09,179 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 22:42:29,508 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:42:29,510 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 22:50:20,153 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:50:20,155 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 22:51:55,493 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:51:55,494 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:51:55,494 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共4个有效IP，开始异步查询
+2025-07-29 22:51:55,602 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功4个
+2025-07-29 22:51:55,602 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.109s
+2025-07-29 22:52:09,362 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:52:09,363 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:52:09,363 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共3个有效IP，开始异步查询
+2025-07-29 22:52:09,364 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功3个
+2025-07-29 22:52:09,364 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-29 22:52:11,905 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:52:11,906 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:52:11,906 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共3个有效IP，开始异步查询
+2025-07-29 22:52:11,906 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功3个
+2025-07-29 22:52:11,907 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.001s
+2025-07-29 22:52:14,442 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 22:52:14,442 - ip_query_api - [32mINFO[0m - query_batch_ips:130 - 收到异步批量IP查询请求
+2025-07-29 22:52:14,443 - ip_query_api - [32mINFO[0m - query_batch_ips:135 - 验证通过，共3个有效IP，开始异步查询
+2025-07-29 22:52:14,443 - ip_query_api - [32mINFO[0m - query_batch_ips:142 - 异步批量查询完成，成功3个
+2025-07-29 22:52:14,443 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.001s
+2025-07-29 22:53:48,052 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 22:53:48,054 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 23:02:27,337 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:02:27,339 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 23:02:27,572 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:02:27,574 - ip_query_api - [32mINFO[0m - <module>:229 - 启动异步Flask应用: 0.0.0.0:5001, debug=True
+2025-07-29 23:03:15,401 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.19041.6093
+2025-07-29 23:03:15,401 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:03:29,794 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT; Windows NT 10.0; zh-CN) WindowsPowerShell/5.1.19041.6093
+2025-07-29 23:03:29,794 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:03:29,794 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:03:56,760 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:03:56,761 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:03:58,810 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:03:58,810 - ip_query_api - [32mINFO[0m - query_single_ip:182 - 收到单个IP查询请求: 8.8.8.8
+2025-07-29 23:03:58,812 - ip_query_api - [32mINFO[0m - query_single_ip:189 - 查询成功: 8.8.8.8
+2025-07-29 23:03:58,812 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.002s
+2025-07-29 23:04:00,855 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:04:00,856 - ip_query_api - [32mINFO[0m - query_single_ip:182 - 收到单个IP查询请求: 114.114.114.114
+2025-07-29 23:04:00,857 - ip_query_api - [32mINFO[0m - query_single_ip:189 - 查询成功: 114.114.114.114
+2025-07-29 23:04:00,858 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.002s
+2025-07-29 23:04:02,894 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:04:02,894 - ip_query_api - [32mINFO[0m - query_single_ip:182 - 收到单个IP查询请求: 1.1.1.1
+2025-07-29 23:04:02,896 - ip_query_api - [32mINFO[0m - query_single_ip:189 - 查询成功: 1.1.1.1
+2025-07-29 23:04:02,896 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.002s
+2025-07-29 23:04:04,945 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:04:04,945 - ip_query_api - [32mINFO[0m - query_batch_ips:211 - 收到批量IP查询请求
+2025-07-29 23:04:04,945 - ip_query_api - [32mINFO[0m - query_batch_ips:216 - 验证通过，共3个有效IP
+2025-07-29 23:04:04,946 - ip_query_api - [32mINFO[0m - query_batch_ips:222 - 批量查询完成，成功3个
+2025-07-29 23:04:04,946 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-29 23:04:49,333 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:04:49,334 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:05:01,118 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:05:01,119 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:05:01,279 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /favicon.ico - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:05:01,280 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /favicon.ico - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:05:07,555 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:05:07,556 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:12:22,768 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:12:22,769 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:12:24,818 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:12:24,819 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:12:24,819 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:13:02,562 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:13:02,794 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:14:01,740 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:14:01,740 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:14:03,789 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:14:03,789 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:14:03,790 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:16:52,427 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:16:52,427 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:16:54,475 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:16:54,475 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:16:54,475 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:18:06,681 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:18:06,681 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:18:08,719 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:18:08,719 - ip_query_api - [32mINFO[0m - query_single_ip:182 - 收到单个IP查询请求: 8.8.8.8
+2025-07-29 23:18:08,720 - ip_query_api - [32mINFO[0m - query_single_ip:189 - 查询成功: 8.8.8.8
+2025-07-29 23:18:08,720 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:18:09,748 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:18:09,748 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:18:09,749 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:18:10,753 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:18:10,754 - ip_query_api - [32mINFO[0m - query_single_ip:182 - 收到单个IP查询请求: 114.114.114.114
+2025-07-29 23:18:10,754 - ip_query_api - [32mINFO[0m - query_single_ip:189 - 查询成功: 114.114.114.114
+2025-07-29 23:18:10,755 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:18:12,806 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:18:12,807 - ip_query_api - [32mINFO[0m - query_single_ip:182 - 收到单个IP查询请求: 1.1.1.1
+2025-07-29 23:18:12,807 - ip_query_api - [32mINFO[0m - query_single_ip:189 - 查询成功: 1.1.1.1
+2025-07-29 23:18:12,808 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:18:14,848 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:18:14,849 - ip_query_api - [32mINFO[0m - query_batch_ips:211 - 收到批量IP查询请求
+2025-07-29 23:18:14,849 - ip_query_api - [32mINFO[0m - query_batch_ips:216 - 验证通过，共3个有效IP
+2025-07-29 23:18:14,849 - ip_query_api - [32mINFO[0m - query_batch_ips:222 - 批量查询完成，成功3个
+2025-07-29 23:18:14,849 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:18:53,804 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:18:53,805 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:19:17,880 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:19:17,880 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:19:27,811 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:19:27,811 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:19:27,811 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:19:35,989 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:19:35,989 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:19:41,223 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:19:41,223 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:19:58,966 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /.well-known/appspecific/com.chrome.devtools.json - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:19:58,966 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /.well-known/appspecific/com.chrome.devtools.json - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:22:13,484 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:22:13,484 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:22:57,895 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:22:57,895 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:23:04,275 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:23:04,275 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 404 - 耗时: 0.001s
+2025-07-29 23:24:16,695 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:24:16,696 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:24:34,266 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:24:34,266 - ip_query_api - [32mINFO[0m - health_check:87 - 健康检查请求
+2025-07-29 23:24:34,267 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:24:55,342 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:25:14,719 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:26:06,167 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:26:06,406 - ip_query_api - [32mINFO[0m - <module>:30 - 初始化异步IP查询服务...
+2025-07-29 23:27:22,919 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:27:22,920 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:27:51,959 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-29 23:27:51,959 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:29:24,433 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:29:24,434 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:29:41,639 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:29:41,639 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:29:57,037 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:29:57,037 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:30:05,786 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:30:05,787 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:30:10,224 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:30:10,224 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:33:28,031 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:33:28,032 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:33:41,146 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:33:41,147 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:34:05,620 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET / - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:34:05,620 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET / - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:34:21,457 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:34:21,458 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-29 23:34:21,459 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-29 23:34:21,459 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.002s
+2025-07-29 23:42:46,658 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:42:46,658 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:42:46,999 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:42:47,000 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-29 23:42:47,000 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:42:55,421 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:42:55,422 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-29 23:42:55,422 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-29 23:42:55,422 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:43:39,083 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:43:39,083 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:43:39,093 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:43:39,093 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-29 23:43:39,093 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:45:33,895 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:45:33,895 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:45:34,220 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:45:34,221 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-29 23:45:34,221 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:45:48,475 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:45:48,475 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-29 23:45:48,475 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-29 23:45:48,475 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:46:05,830 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET / - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:46:05,830 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET / - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:48:10,504 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:48:10,505 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:48:10,849 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:48:10,849 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-29 23:48:10,850 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-29 23:55:35,439 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:55:35,440 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-29 23:55:35,779 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-29 23:55:35,779 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-29 23:55:35,780 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:02:05,452 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:05,452 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:02:05,452 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:02:05,452 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:02:09,824 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:09,824 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:02:10,164 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:10,165 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:02:10,165 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:02:21,048 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:21,049 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:02:21,073 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:21,073 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:02:21,074 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:02:39,859 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:39,860 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:02:40,238 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:02:40,238 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:02:40,239 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:03:13,688 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:03:13,689 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:03:13,714 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:03:13,714 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:03:13,714 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:03:17,139 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:03:17,140 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:03:17,140 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:03:17,140 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:04:15,248 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:04:15,248 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:04:15,606 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:04:15,607 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:04:15,607 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:04:23,283 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:04:23,284 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:04:26,867 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:04:26,867 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:07:19,993 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:07:19,994 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:07:22,040 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:07:22,040 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:07:22,041 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:08:04,828 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:08:04,828 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:08:06,866 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:08:06,866 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:08:06,866 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:15:27,984 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:15:27,985 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:15:30,044 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:15:30,045 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:15:30,045 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:16:56,629 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:16:56,630 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:16:58,694 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:16:58,694 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:17:00,758 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:00,758 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:17:00,758 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:17:00,758 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:17:02,808 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/monitoring/metrics - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:02,808 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/monitoring/metrics - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:17:04,856 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/monitoring/alerts - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:04,856 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/monitoring/alerts - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:17:06,901 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/monitoring/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:06,901 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/monitoring/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:17:08,954 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/stats - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:08,955 - ip_query_api - [32mINFO[0m - get_stats:133 - 获取性能统计信息
+2025-07-30 00:17:08,955 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/stats - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:17:10,988 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:10,988 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 00:17:10,989 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共3个有效IP
+2025-07-30 00:17:10,990 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功3个
+2025-07-30 00:17:10,990 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:17:13,030 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:13,030 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:17:13,030 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:17:15,092 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:15,092 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:17:17,143 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:17,144 - ip_query_api - [32mINFO[0m - query_single_ip:135 - 收到异步单个IP查询请求: 8.8.8.8
+2025-07-30 00:17:17,144 - ip_query_api - [32mINFO[0m - query_single_ip:142 - 异步查询完成: 8.8.8.8
+2025-07-30 00:17:17,145 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:17:19,203 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/stats - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:19,204 - ip_query_api - [32mINFO[0m - get_stats:214 - 获取异步服务统计信息
+2025-07-30 00:17:19,204 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/stats - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:17:21,249 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:21,250 - ip_query_api - [32mINFO[0m - query_batch_ips:165 - 收到异步批量IP查询请求
+2025-07-30 00:17:21,250 - ip_query_api - [32mINFO[0m - query_batch_ips:170 - 验证通过，共2个有效IP，开始异步查询
+2025-07-30 00:17:21,251 - ip_query_api - [32mINFO[0m - query_batch_ips:177 - 异步批量查询完成，成功2个
+2025-07-30 00:17:21,251 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:17:23,328 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 OPTIONS /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:17:23,328 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 OPTIONS /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:21:10,392 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:21:10,393 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:21:17,327 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:21:17,327 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:35:54,615 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:35:54,615 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:36:12,756 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:36:12,756 - ip_query_api - [32mINFO[0m - health_check:122 - 健康检查请求
+2025-07-30 00:36:12,756 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:43:53,676 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:43:53,676 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:43:53,677 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:43:53,677 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:43:55,706 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 00:43:55,707 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 00:43:55,707 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共2个有效IP
+2025-07-30 00:43:55,707 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功2个
+2025-07-30 00:43:55,707 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:44:46,667 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:44:46,668 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:44:52,061 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:44:52,062 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:44:53,411 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:44:53,412 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:44:53,412 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:44:53,412 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:44:54,506 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:44:54,506 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 999.999.999.999
+2025-07-30 00:44:54,506 - ip_query_api - [33mWARNING[0m - query_single_ip:235 - 参数验证失败: IP地址格式无效
+2025-07-30 00:44:54,507 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 400 - 耗时: 0.001s
+2025-07-30 00:48:13,370 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:48:13,370 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 114.114.114.114
+2025-07-30 00:48:13,371 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 114.114.114.114
+2025-07-30 00:48:13,371 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:48:20,208 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:48:20,209 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 208.67.222.222
+2025-07-30 00:48:20,209 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 208.67.222.222
+2025-07-30 00:48:20,210 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:48:23,445 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:48:23,446 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:48:23,446 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:48:23,446 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:48:44,235 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 OPTIONS /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:48:44,235 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 OPTIONS /api/query-batch - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:48:44,545 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:48:44,545 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 00:48:44,546 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共100个有效IP
+2025-07-30 00:48:44,571 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功100个
+2025-07-30 00:48:44,572 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.027s
+2025-07-30 00:49:06,155 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:49:06,155 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:49:06,155 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:49:06,156 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:49:06,579 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:49:06,579 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 00:49:06,579 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 00:49:06,579 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 00:49:28,029 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 OPTIONS /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:49:28,029 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 OPTIONS /api/query-batch - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:49:28,345 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:49:28,346 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 00:49:28,346 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共100个有效IP
+2025-07-30 00:49:28,346 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功100个
+2025-07-30 00:49:28,347 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:57:02,659 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 OPTIONS /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:57:02,660 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 OPTIONS /api/query-batch - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:57:02,924 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:57:02,925 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 00:57:02,925 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共100个有效IP
+2025-07-30 00:57:02,925 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功100个
+2025-07-30 00:57:02,926 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:58:24,226 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 OPTIONS /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:58:24,227 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 OPTIONS /api/query-batch - 状态: 200 - 耗时: 0.000s
+2025-07-30 00:58:24,488 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:58:24,488 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 00:58:24,489 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共100个有效IP
+2025-07-30 00:58:24,489 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功100个
+2025-07-30 00:58:24,490 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-30 00:59:04,441 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 00:59:04,442 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 111.206.198.12
+2025-07-30 00:59:04,442 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 111.206.198.12
+2025-07-30 00:59:04,442 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 01:15:09,558 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 01:15:09,558 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s
+2025-07-30 01:17:54,182 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 OPTIONS /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 01:17:54,182 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 OPTIONS /api/query-batch - 状态: 200 - 耗时: 0.000s
+2025-07-30 01:17:54,448 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 POST /api/query-batch - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 01:17:54,448 - ip_query_api - [32mINFO[0m - query_batch_ips:249 - 收到批量IP查询请求
+2025-07-30 01:17:54,449 - ip_query_api - [32mINFO[0m - query_batch_ips:254 - 验证通过，共100个有效IP
+2025-07-30 01:17:54,449 - ip_query_api - [32mINFO[0m - query_batch_ips:260 - 批量查询完成，成功100个
+2025-07-30 01:17:54,450 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 POST /api/query-batch - 状态: 200 - 耗时: 0.002s
+2025-07-30 03:02:11,466 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET / - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 03:02:11,467 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET / - 状态: 200 - 耗时: 0.001s
+2025-07-30 03:03:38,325 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET / - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 03:03:38,325 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET / - 状态: 200 - 耗时: 0.000s
+2025-07-30 03:04:18,543 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET / - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 03:04:18,544 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET / - 状态: 200 - 耗时: 0.001s
+2025-07-30 03:22:05,292 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/query-ip - IP: 127.0.0.1 - UA: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-30 03:22:05,292 - ip_query_api - [32mINFO[0m - query_single_ip:220 - 收到单个IP查询请求: 8.8.8.8
+2025-07-30 03:22:05,293 - ip_query_api - [32mINFO[0m - query_single_ip:227 - 查询成功: 8.8.8.8
+2025-07-30 03:22:05,293 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/query-ip - 状态: 200 - 耗时: 0.001s
+2025-07-30 03:33:03,576 - ip_query_api - [32mINFO[0m - log_request:116 - 请求 GET /api/health - IP: 127.0.0.1 - UA: python-requests/2.31.0
+2025-07-30 03:33:03,576 - ip_query_api - [32mINFO[0m - log_response:120 - 响应 GET /api/health - 状态: 200 - 耗时: 0.000s

@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  # FastAPI后端服务（主要）
+  backend-fastapi:
+    build:
+      context: ./backend-fastapi
+      dockerfile: Dockerfile
+    container_name: ip-query-backend-fastapi
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_ENABLED=true
+      - LOG_LEVEL=INFO
+      - GEOIP_DB_PATH=/app/data/GeoLite2-City.mmdb
+    volumes:
+      - ./backend-fastapi/data:/app/data:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ip-query-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Flask后端服务（兼容性）
+  backend-flask:
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+    container_name: ip-query-backend-flask
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=False
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5000
+      - LOG_LEVEL=INFO
+      - LOG_DIR=/app/logs
+    volumes:
+      - ./API/logs:/app/logs
+      - ./API/GeoLite2-City.mmdb:/app/GeoLite2-City.mmdb:ro
+    networks:
+      - ip-query-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend-vue3
+      dockerfile: Dockerfile
+    container_name: ip-query-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      backend-fastapi:
+        condition: service_healthy
+    networks:
+      - ip-query-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: ip-query-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend-fastapi
+    networks:
+      - ip-query-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis缓存 (可选)
+  redis:
+    image: redis:7-alpine
+    container_name: ip-query-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ip-query-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  ip-query-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+    driver: local
+  nginx_logs:
+    driver: local
