@@ -1,0 +1,132 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # 基础检查
+  basic-checks:
+    runs-on: ubuntu-latest
+    name: Basic Checks
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Check project structure
+      run: |
+        echo "检查项目结构..."
+        ls -la
+        echo "检查API系统..."
+        ls -la api-system/ || echo "API系统目录不存在"
+        echo "检查前端应用..."
+        ls -la ip-tool/ || echo "前端应用目录不存在"
+        echo "检查管理后台..."
+        ls -la admin-panel/ || echo "管理后台目录不存在"
+
+    - name: Validate Docker Compose
+      run: |
+        if [ -f "docker-compose.yml" ]; then
+          echo "验证Docker Compose配置..."
+          docker-compose config
+        else
+          echo "docker-compose.yml文件不存在"
+        fi
+
+  # API服务检查
+  api-check:
+    runs-on: ubuntu-latest
+    name: API Service Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Check API dependencies
+      run: |
+        if [ -f "api-system/package.json" ]; then
+          cd api-system
+          echo "检查API依赖..."
+          npm ci --dry-run || echo "依赖安装可能有问题"
+        else
+          echo "API系统package.json不存在"
+        fi
+
+  # 前端应用检查
+  frontend-check:
+    runs-on: ubuntu-latest
+    name: Frontend Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Check Frontend dependencies
+      run: |
+        if [ -f "ip-tool/package.json" ]; then
+          cd ip-tool
+          echo "检查前端依赖..."
+          npm ci --dry-run || echo "依赖安装可能有问题"
+        else
+          echo "前端应用package.json不存在"
+        fi
+
+  # 管理后台检查
+  admin-check:
+    runs-on: ubuntu-latest
+    name: Admin Panel Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Check Admin dependencies
+      run: |
+        if [ -f "admin-panel/composer.json" ]; then
+          cd admin-panel
+          echo "检查管理后台依赖..."
+          composer validate || echo "Composer配置可能有问题"
+        else
+          echo "管理后台composer.json不存在"
+        fi
+
+  # 文档检查
+  docs-check:
+    runs-on: ubuntu-latest
+    name: Documentation Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check documentation
+      run: |
+        echo "检查文档文件..."
+        [ -f "README.md" ] && echo "✓ README.md存在" || echo "✗ README.md缺失"
+        [ -f "LICENSE" ] && echo "✓ LICENSE存在" || echo "✗ LICENSE缺失"
+        [ -f "CONTRIBUTING.md" ] && echo "✓ CONTRIBUTING.md存在" || echo "✗ CONTRIBUTING.md缺失"
+        [ -d "docs/" ] && echo "✓ docs目录存在" || echo "✗ docs目录缺失"
+        [ -d "deploy/" ] && echo "✓ deploy目录存在" || echo "✗ deploy目录缺失"

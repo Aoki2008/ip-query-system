@@ -1,0 +1,131 @@
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.testing
+
+# 日志文件
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# PHP/Laravel
+vendor/
+storage/app/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+
+# Composer
+composer.phar
+composer.lock
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# 数据库文件
+*.sqlite
+*.sqlite3
+*.db
+
+# MaxMind数据库文件
+*.mmdb
+data/GeoLite2-*.mmdb
+data/GeoIP2-*.mmdb
+
+# 备份文件
+backups/
+*.backup
+*.bak
+*.sql.gz
+*.tar.gz
+
+# 上传文件
+uploads/
+storage/app/public/uploads/
+
+# 缓存文件
+.cache/
+*.cache
+
+# 临时文件
+tmp/
+temp/
+.tmp/
+
+# 测试覆盖率报告
+coverage/
+.nyc_output/
+.coverage/
+
+# 构建产物
+build/
+dist/
+public/build/
+
+# 证书文件
+*.pem
+*.key
+*.crt
+*.p12
+ssl/
+
+# 运行时文件
+*.pid
+*.seed
+*.pid.lock
+
+# 依赖目录
+jspm_packages/
+
+# TypeScript
+*.tsbuildinfo
+
+# 其他
+.netlify
+.vscode-test

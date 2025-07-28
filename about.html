@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - IP查询工具</title>
+    <meta name="description" content="了解IP查询工具，我们致力于提供最好的IP地址查询服务">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/svg+xml" sizes="16x16" href="favicon-16x16.svg">
+    <link rel="icon" type="image/svg+xml" sizes="32x32" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="logo.svg" alt="IP查询工具" width="40" height="40">
+                </div>
+                <div class="site-title">
+                    <h1>IP查询工具</h1>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">🏠 首页</a></li>
+                    <li><a href="ip-lookup.html">🔍 IP查询</a></li>
+                    <li><a href="help.html">❓ 使用帮助</a></li>
+                    <li><a href="about.html" class="active">ℹ️ 关于我们</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="about-section">
+                <h2>ℹ️ 关于我们</h2>
+                <div class="about-content">
+                    <h3>🚀 IP查询工具简介</h3>
+                    <p>IP查询工具是一个现代化、免费、简单、实用的在线工具，采用最新的设计理念和技术栈，旨在帮助用户快速查询IP地址的地理位置、运营商等信息。</p>
+
+                    <h3>✨ 我们的特点</h3>
+                    <ul class="features-list">
+                        <li>🎨 现代化设计，支持深色/浅色主题</li>
+                        <li>⚡ 查询速度快，结果准确可靠</li>
+                        <li>🆓 完全免费，无需注册或登录</li>
+                        <li>🔒 保护用户隐私，不存储查询记录</li>
+                        <li>📱 响应式设计，完美支持移动设备</li>
+                        <li>🌐 使用最新的Web技术构建</li>
+                    </ul>
+
+                    <h3>🛠️ 技术特性</h3>
+                    <ul class="features-list">
+                        <li>采用现代CSS变量和Grid布局</li>
+                        <li>支持主题切换和本地存储</li>
+                        <li>优雅的动画和交互效果</li>
+                        <li>无障碍设计，支持键盘导航</li>
+                    </ul>
+
+                    <h3>📧 联系我们</h3>
+                    <p>如果您在使用过程中有任何问题或建议，欢迎通过以下方式联系我们：</p>
+                    <p>📮 邮箱：contact@ipquerytool.com</p>
+                    <p>🐛 问题反馈：issues@ipquerytool.com</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>IP查询工具 &copy; 2024 版权所有 | 现代化网络工具</p>
+                <p><a href="http://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">京ICP备12345678号</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // 主题切换功能
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        // 从localStorage获取保存的主题
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // 设置当前页面导航激活状态
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.main-nav a');
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
