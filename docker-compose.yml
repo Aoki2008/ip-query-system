@@ -86,10 +86,14 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/ssl.conf:/etc/nginx/conf.d/ssl.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
       - backend
       - frontend
       - admin
+    environment:
+      - NGINX_SSL_ENABLED=true
     profiles:
       - production
 

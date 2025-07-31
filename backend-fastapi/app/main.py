@@ -18,6 +18,11 @@ from app.services.geoip_service import geoip_service
 from app.services.cache_service import cache_service
 from app.middleware.performance import PerformanceMiddleware, RateLimitMiddleware
 from app.core.security_middleware import SecurityMiddleware
+from .core.error_handler import (
+    SecurityErrorHandler,
+    global_exception_handler,
+    http_exception_handler
+)
 from app.database import init_database, check_database_connection
 from app.admin.auth.routes import router as admin_auth_router
 from app.admin.permissions.routes import router as admin_permissions_router
@@ -149,6 +154,9 @@ def create_app() -> FastAPI:
     # 添加安全中间件 (必须在其他中间件之前)
     app.add_middleware(SecurityMiddleware)
 
+    # 添加错误处理中间件
+    app.add_middleware(SecurityErrorHandler, debug=settings.debug)
+
     # 添加性能监控中间件
     app.add_middleware(PerformanceMiddleware)
 
@@ -161,6 +169,10 @@ def create_app() -> FastAPI:
     
     # 设置异常处理器
     setup_exception_handlers(app)
+
+    # 添加安全异常处理器
+    app.add_exception_handler(Exception, global_exception_handler)
+    app.add_exception_handler(HTTPException, http_exception_handler)
     
     # 注册路由
     app.include_router(api_router, prefix="/api")
