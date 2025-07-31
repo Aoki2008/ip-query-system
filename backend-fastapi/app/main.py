@@ -17,6 +17,7 @@ from app.api.routes import api_router
 from app.services.geoip_service import geoip_service
 from app.services.cache_service import cache_service
 from app.middleware.performance import PerformanceMiddleware, RateLimitMiddleware
+from app.core.security_middleware import SecurityMiddleware
 from app.database import init_database, check_database_connection
 from app.admin.auth.routes import router as admin_auth_router
 from app.admin.permissions.routes import router as admin_permissions_router
@@ -144,6 +145,9 @@ def create_app() -> FastAPI:
         TrustedHostMiddleware,
         allowed_hosts=["*"]  # 生产环境应该限制具体主机
     )
+
+    # 添加安全中间件 (必须在其他中间件之前)
+    app.add_middleware(SecurityMiddleware)
 
     # 添加性能监控中间件
     app.add_middleware(PerformanceMiddleware)

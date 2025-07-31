@@ -2,6 +2,7 @@
 应用配置模块
 使用Pydantic Settings进行配置管理
 """
+import secrets
 from typing import List, Optional
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -99,7 +100,7 @@ class Settings(BaseSettings):
 
     # 管理后台配置
     admin_secret_key: str = Field(
-        default="dev-secret-key-change-in-production-must-be-32-chars-long",
+        default_factory=lambda: secrets.token_urlsafe(32),
         description="管理后台JWT密钥"
     )
     admin_access_token_expire_minutes: int = Field(
@@ -111,8 +112,38 @@ class Settings(BaseSettings):
         description="刷新令牌过期时间(天)"
     )
     admin_max_login_attempts: int = Field(
-        default=5,
+        default=3,
         description="最大登录尝试次数"
+    )
+
+    # 强化密码策略
+    password_min_length: int = Field(
+        default=12,
+        description="密码最小长度"
+    )
+    password_require_uppercase: bool = Field(
+        default=True,
+        description="密码必须包含大写字母"
+    )
+    password_require_lowercase: bool = Field(
+        default=True,
+        description="密码必须包含小写字母"
+    )
+    password_require_numbers: bool = Field(
+        default=True,
+        description="密码必须包含数字"
+    )
+    password_require_symbols: bool = Field(
+        default=True,
+        description="密码必须包含特殊字符"
+    )
+    password_min_unique_chars: int = Field(
+        default=8,
+        description="密码最少不同字符数"
+    )
+    password_max_repeated_chars: int = Field(
+        default=2,
+        description="密码最多重复字符数"
     )
 
     class Config:

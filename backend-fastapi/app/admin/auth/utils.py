@@ -4,10 +4,12 @@
 import os
 import secrets
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Tuple, List
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from fastapi import HTTPException, status
+
+from ...core.password_validator import PasswordValidator
 
 # 密码加密上下文
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -27,6 +29,41 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     """生成密码哈希"""
     return pwd_context.hash(password)
+
+
+def validate_password_strength(password: str) -> Tuple[bool, List[str]]:
+    """
+    验证密码强度
+
+    Args:
+        password: 待验证的密码
+
+    Returns:
+        Tuple[bool, List[str]]: (是否通过验证, 错误信息列表)
+    """
+    return PasswordValidator.validate_password(password)
+
+
+def get_password_strength_info(password: str) -> Dict[str, Any]:
+    """
+    获取密码强度信息
+
+    Args:
+        password: 密码
+
+    Returns:
+        Dict[str, Any]: 密码强度信息
+    """
+    is_valid, errors = PasswordValidator.validate_password(password)
+    score, strength = PasswordValidator.get_password_strength_score(password)
+
+    return {
+        "is_valid": is_valid,
+        "errors": errors,
+        "score": score,
+        "strength": strength,
+        "suggestions": PasswordValidator.generate_password_suggestions() if not is_valid else []
+    }
 
 
 def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
