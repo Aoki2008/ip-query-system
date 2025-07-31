@@ -98,13 +98,13 @@ def create_app() -> FastAPI:
         redoc_url="/redoc",
         openapi_url="/openapi.json",
         contact={
-            "name": "IP查询工具",
-            "url": "https://github.com/your-repo/ip-query-tool",
-            "email": "admin@example.com"
+            "name": "IP查询系统",
+            "url": "https://github.com/Aoki2008/ip-query-system",
+            "email": "support@ip-query-system.com"
         },
         license_info={
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
+            "name": "MIT License",
+            "url": "https://github.com/Aoki2008/ip-query-system/blob/main/LICENSE"
         },
         tags_metadata=[
             {

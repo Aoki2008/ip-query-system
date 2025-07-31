@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP查询系统 API 交互式文档</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .api-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .api-title {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .endpoint {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .method.get { background: #28a745; }
+        .method.post { background: #007bff; }
+        .method.put { background: #ffc107; color: #333; }
+        .method.delete { background: #dc3545; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .response-area {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .response-area h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .response-content {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            color: #667eea;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: #ffeaa7;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 IP查询系统 API</h1>
+            <p>交互式API文档和测试工具</p>
+        </div>
+
+        <!-- 单个IP查询 -->
+        <div class="api-section">
+            <h2 class="api-title">🔍 单个IP查询</h2>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <code>/api/query/{ip}</code>
+            </div>
+            
+            <div class="form-group">
+                <label for="single-ip">IP地址:</label>
+                <input type="text" id="single-ip" placeholder="例如: 8.8.8.8" value="8.8.8.8">
+            </div>
+            
+            <div class="form-group">
+                <label for="single-db-type">数据库类型:</label>
+                <select id="single-db-type">
+                    <option value="auto">自动选择</option>
+                    <option value="city">城市数据库</option>
+                    <option value="country">国家数据库</option>
+                    <option value="asn">ASN数据库</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="single-lang">语言:</label>
+                <select id="single-lang">
+                    <option value="zh-CN">中文</option>
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="querySingleIP()">🚀 查询IP</button>
+            
+            <div class="response-area" id="single-response" style="display: none;">
+                <h4>响应结果:</h4>
+                <div class="response-content" id="single-response-content"></div>
+            </div>
+        </div>
+
+        <!-- 批量IP查询 -->
+        <div class="api-section">
+            <h2 class="api-title">📊 批量IP查询</h2>
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <code>/api/query/batch</code>
+            </div>
+            
+            <div class="form-group">
+                <label for="batch-ips">IP地址列表 (每行一个):</label>
+                <textarea id="batch-ips" rows="5" placeholder="8.8.8.8&#10;1.1.1.1&#10;114.114.114.114">8.8.8.8
+1.1.1.1
+114.114.114.114</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="batch-db-type">数据库类型:</label>
+                <select id="batch-db-type">
+                    <option value="city">城市数据库</option>
+                    <option value="country">国家数据库</option>
+                    <option value="asn">ASN数据库</option>
+                </select>
+            </div>
+            
+            <button class="btn" onclick="queryBatchIPs()">🚀 批量查询</button>
+            
+            <div class="response-area" id="batch-response" style="display: none;">
+                <h4>响应结果:</h4>
+                <div class="response-content" id="batch-response-content"></div>
+            </div>
+        </div>
+
+        <!-- IP验证 -->
+        <div class="api-section">
+            <h2 class="api-title">✅ IP地址验证</h2>
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <code>/api/validate/{ip}</code>
+            </div>
+            
+            <div class="form-group">
+                <label for="validate-ip">IP地址:</label>
+                <input type="text" id="validate-ip" placeholder="例如: 192.168.1.1" value="192.168.1.1">
+            </div>
+            
+            <button class="btn" onclick="validateIP()">🔍 验证IP</button>
+            
+            <div class="response-area" id="validate-response" style="display: none;">
+                <h4>验证结果:</h4>
+                <div class="response-content" id="validate-response-content"></div>
+            </div>
+        </div>
+
+        <!-- 代码示例 -->
+        <div class="api-section">
+            <h2 class="api-title">💻 代码示例</h2>
+            
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('javascript')">JavaScript</div>
+                <div class="tab" onclick="showTab('python')">Python</div>
+                <div class="tab" onclick="showTab('php')">PHP</div>
+                <div class="tab" onclick="showTab('curl')">cURL</div>
+            </div>
+
+            <div class="tab-content active" id="javascript">
+                <h4>JavaScript 示例:</h4>
+                <div class="code-example">// 单个IP查询
+async function queryIP(ip) {
+    const response = await fetch(`/api/query/${ip}`);
+    const data = await response.json();
+    console.log(data);
+}
+
+// 批量查询
+async function batchQuery(ips) {
+    const response = await fetch('/api/query/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ips: ips })
+    });
+    const data = await response.json();
+    console.log(data);
+}
+
+// 使用示例
+queryIP('8.8.8.8');
+batchQuery(['8.8.8.8', '1.1.1.1']);</div>
+            </div>
+
+            <div class="tab-content" id="python">
+                <h4>Python 示例:</h4>
+                <div class="code-example">import requests
+
+# 单个IP查询
+def query_ip(ip):
+    response = requests.get(f'/api/query/{ip}')
+    return response.json()
+
+# 批量查询
+def batch_query(ips):
+    data = {'ips': ips}
+    response = requests.post('/api/query/batch', json=data)
+    return response.json()
+
+# 使用示例
+result = query_ip('8.8.8.8')
+print(result)
+
+batch_result = batch_query(['8.8.8.8', '1.1.1.1'])
+print(batch_result)</div>
+            </div>
+
+            <div class="tab-content" id="php">
+                <h4>PHP 示例:</h4>
+                <div class="code-example">&lt;?php
+// 单个IP查询
+function queryIP($ip) {
+    $url = "/api/query/" . urlencode($ip);
+    $response = file_get_contents($url);
+    return json_decode($response, true);
+}
+
+// 批量查询
+function batchQuery($ips) {
+    $data = json_encode(['ips' => $ips]);
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => 'Content-Type: application/json',
+            'content' => $data
+        ]
+    ]);
+    $response = file_get_contents('/api/query/batch', false, $context);
+    return json_decode($response, true);
+}
+
+// 使用示例
+$result = queryIP('8.8.8.8');
+print_r($result);
+?&gt;</div>
+            </div>
+
+            <div class="tab-content" id="curl">
+                <h4>cURL 示例:</h4>
+                <div class="code-example"># 单个IP查询
+curl -X GET "http://localhost:8000/api/query/8.8.8.8"
+
+# 批量查询
+curl -X POST "http://localhost:8000/api/query/batch" \
+  -H "Content-Type: application/json" \
+  -d '{"ips": ["8.8.8.8", "1.1.1.1"]}'
+
+# IP验证
+curl -X GET "http://localhost:8000/api/validate/8.8.8.8"
+
+# 获取数据库信息
+curl -X GET "http://localhost:8000/api/database/info"</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        // 单个IP查询
+        async function querySingleIP() {
+            const ip = document.getElementById('single-ip').value;
+            const dbType = document.getElementById('single-db-type').value;
+            const lang = document.getElementById('single-lang').value;
+            
+            if (!ip) {
+                alert('请输入IP地址');
+                return;
+            }
+
+            const responseDiv = document.getElementById('single-response');
+            const responseContent = document.getElementById('single-response-content');
+            
+            responseDiv.style.display = 'block';
+            responseContent.textContent = '正在查询...';
+            responseContent.className = 'response-content loading';
+
+            try {
+                const url = `${API_BASE}/api/query/${ip}?db_type=${dbType}&lang=${lang}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                responseContent.textContent = JSON.stringify(data, null, 2);
+                responseContent.className = response.ok ? 'response-content success' : 'response-content error';
+            } catch (error) {
+                responseContent.textContent = `请求失败: ${error.message}`;
+                responseContent.className = 'response-content error';
+            }
+        }
+
+        // 批量IP查询
+        async function queryBatchIPs() {
+            const ipsText = document.getElementById('batch-ips').value;
+            const dbType = document.getElementById('batch-db-type').value;
+            
+            const ips = ipsText.split('\n').map(ip => ip.trim()).filter(ip => ip);
+            
+            if (ips.length === 0) {
+                alert('请输入至少一个IP地址');
+                return;
+            }
+
+            const responseDiv = document.getElementById('batch-response');
+            const responseContent = document.getElementById('batch-response-content');
+            
+            responseDiv.style.display = 'block';
+            responseContent.textContent = '正在批量查询...';
+            responseContent.className = 'response-content loading';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/query/batch`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ips: ips,
+                        db_type: dbType,
+                        lang: 'zh-CN'
+                    })
+                });
+                
+                const data = await response.json();
+                responseContent.textContent = JSON.stringify(data, null, 2);
+                responseContent.className = response.ok ? 'response-content success' : 'response-content error';
+            } catch (error) {
+                responseContent.textContent = `请求失败: ${error.message}`;
+                responseContent.className = 'response-content error';
+            }
+        }
+
+        // IP验证
+        async function validateIP() {
+            const ip = document.getElementById('validate-ip').value;
+            
+            if (!ip) {
+                alert('请输入IP地址');
+                return;
+            }
+
+            const responseDiv = document.getElementById('validate-response');
+            const responseContent = document.getElementById('validate-response-content');
+            
+            responseDiv.style.display = 'block';
+            responseContent.textContent = '正在验证...';
+            responseContent.className = 'response-content loading';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/validate/${ip}`);
+                const data = await response.json();
+                
+                responseContent.textContent = JSON.stringify(data, null, 2);
+                responseContent.className = response.ok ? 'response-content success' : 'response-content error';
+            } catch (error) {
+                responseContent.textContent = `请求失败: ${error.message}`;
+                responseContent.className = 'response-content error';
+            }
+        }
+
+        // 标签页切换
+        function showTab(tabName) {
+            // 隐藏所有标签内容
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // 移除所有标签的active类
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // 显示选中的标签内容
+            document.getElementById(tabName).classList.add('active');
+            
+            // 添加active类到选中的标签
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

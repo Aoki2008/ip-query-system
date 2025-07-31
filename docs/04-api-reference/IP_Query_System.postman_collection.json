@@ -1,0 +1,541 @@
+{
+  "info": {
+    "name": "IP查询系统 API",
+    "description": "IP查询系统完整API接口集合，包含公共查询接口和管理接口",
+    "version": "4.2.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🌐 公共API接口",
+      "item": [
+        {
+          "name": "系统健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "检查系统运行状态和基本信息"
+          },
+          "response": [
+            {
+              "name": "成功响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["health"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"status\": \"healthy\",\n  \"timestamp\": \"2025-07-31T14:30:00Z\",\n  \"version\": \"4.2.0\",\n  \"uptime\": \"2 days, 3 hours, 45 minutes\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "单个IP查询",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/query/8.8.8.8?db_type=city&lang=zh-CN&format=json",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "8.8.8.8"],
+              "query": [
+                {
+                  "key": "db_type",
+                  "value": "city",
+                  "description": "数据库类型 (auto/city/country/asn)"
+                },
+                {
+                  "key": "lang",
+                  "value": "zh-CN",
+                  "description": "语言 (zh-CN/en/ja)"
+                },
+                {
+                  "key": "format",
+                  "value": "json",
+                  "description": "响应格式 (json/xml/csv)"
+                }
+              ]
+            },
+            "description": "查询单个IP地址的详细地理位置信息"
+          },
+          "response": [
+            {
+              "name": "成功响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/query/8.8.8.8?db_type=city&lang=zh-CN",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "query", "8.8.8.8"],
+                  "query": [
+                    {
+                      "key": "db_type",
+                      "value": "city"
+                    },
+                    {
+                      "key": "lang",
+                      "value": "zh-CN"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"ip\": \"8.8.8.8\",\n    \"country\": \"美国\",\n    \"country_code\": \"US\",\n    \"region\": \"加利福尼亚州\",\n    \"city\": \"山景城\",\n    \"latitude\": 37.4056,\n    \"longitude\": -122.0775,\n    \"timezone\": \"America/Los_Angeles\",\n    \"isp\": \"Google LLC\",\n    \"organization\": \"Google Public DNS\",\n    \"asn\": \"AS15169\",\n    \"is_proxy\": false,\n    \"is_satellite\": false,\n    \"accuracy_radius\": 1000\n  },\n  \"query_time\": \"2025-07-31T14:30:00Z\",\n  \"response_time_ms\": 15,\n  \"database_info\": {\n    \"type\": \"city\",\n    \"version\": \"2024.01\",\n    \"build_date\": \"2024-01-15\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "批量IP查询",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ips\": [\"8.8.8.8\", \"1.1.1.1\", \"114.114.114.114\"],\n  \"db_type\": \"city\",\n  \"lang\": \"zh-CN\",\n  \"include_details\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/query/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "batch"]
+            },
+            "description": "批量查询多个IP地址，单次最多100个IP"
+          },
+          "response": [
+            {
+              "name": "成功响应",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ips\": [\"8.8.8.8\", \"1.1.1.1\"],\n  \"db_type\": \"city\",\n  \"lang\": \"zh-CN\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/query/batch",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "query", "batch"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"total\": 2,\n  \"processed\": 2,\n  \"failed\": 0,\n  \"results\": [\n    {\n      \"ip\": \"8.8.8.8\",\n      \"success\": true,\n      \"data\": {\n        \"country\": \"美国\",\n        \"city\": \"山景城\",\n        \"isp\": \"Google LLC\"\n      }\n    },\n    {\n      \"ip\": \"1.1.1.1\",\n      \"success\": true,\n      \"data\": {\n        \"country\": \"美国\",\n        \"city\": \"旧金山\",\n        \"isp\": \"Cloudflare\"\n      }\n    }\n  ],\n  \"query_time\": \"2025-07-31T14:30:00Z\",\n  \"response_time_ms\": 45\n}"
+            }
+          ]
+        },
+        {
+          "name": "IP地址验证",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/validate/192.168.1.1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "validate", "192.168.1.1"]
+            },
+            "description": "验证IP地址格式是否正确，检查IP类型"
+          },
+          "response": [
+            {
+              "name": "成功响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/validate/192.168.1.1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "validate", "192.168.1.1"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"ip\": \"192.168.1.1\",\n  \"valid\": true,\n  \"type\": \"ipv4\",\n  \"is_private\": true,\n  \"is_loopback\": false,\n  \"is_multicast\": false,\n  \"is_reserved\": false\n}"
+            }
+          ]
+        },
+        {
+          "name": "数据库信息查询",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/database/info",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "database", "info"]
+            },
+            "description": "获取可用数据库的详细信息"
+          },
+          "response": [
+            {
+              "name": "成功响应",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/database/info",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "database", "info"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"databases\": [\n    {\n      \"type\": \"city\",\n      \"name\": \"GeoLite2-City\",\n      \"version\": \"2024.01.15\",\n      \"description\": \"城市级IP地理位置数据库\",\n      \"record_count\": 3500000,\n      \"last_updated\": \"2024-01-15T00:00:00Z\",\n      \"file_size\": \"65MB\"\n    },\n    {\n      \"type\": \"country\",\n      \"name\": \"GeoLite2-Country\",\n      \"version\": \"2024.01.15\",\n      \"description\": \"国家级IP地理位置数据库\",\n      \"record_count\": 400000,\n      \"last_updated\": \"2024-01-15T00:00:00Z\",\n      \"file_size\": \"5MB\"\n    }\n  ],\n  \"total_databases\": 2,\n  \"default_database\": \"city\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🔐 管理API接口",
+      "item": [
+        {
+          "name": "管理员登录",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.success && response.access_token) {",
+                  "        pm.collectionVariables.set('adminToken', response.access_token);",
+                  "        console.log('JWT令牌已保存到集合变量');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"your_password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "auth", "login"]
+            },
+            "description": "管理员登录获取JWT令牌，令牌会自动保存到集合变量中"
+          },
+          "response": [
+            {
+              "name": "登录成功",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"your_password\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/admin/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["admin", "auth", "login"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"success\": true,\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 900,\n  \"user_info\": {\n    \"id\": 1,\n    \"username\": \"admin\",\n    \"role\": \"admin\",\n    \"last_login\": \"2025-07-31T14:30:00Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "查询历史记录",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/queries?page=1&size=10&start_date=2025-07-01&end_date=2025-07-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "queries"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "页码"
+                },
+                {
+                  "key": "size",
+                  "value": "10",
+                  "description": "每页数量"
+                },
+                {
+                  "key": "start_date",
+                  "value": "2025-07-01",
+                  "description": "开始日期 (YYYY-MM-DD)"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2025-07-31",
+                  "description": "结束日期 (YYYY-MM-DD)"
+                },
+                {
+                  "key": "ip",
+                  "value": "",
+                  "description": "筛选IP地址",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "获取查询历史记录，支持分页和筛选"
+          }
+        },
+        {
+          "name": "系统统计信息",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "stats"]
+            },
+            "description": "获取系统统计信息，包括查询量、性能指标等"
+          }
+        },
+        {
+          "name": "数据库更新",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"database_type\": \"city\",\n  \"auto_backup\": true,\n  \"force_update\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/database/update",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "database", "update"]
+            },
+            "description": "更新数据库文件，支持自动备份"
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 测试用例",
+      "item": [
+        {
+          "name": "IPv4地址测试",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/query/8.8.8.8",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "8.8.8.8"]
+            }
+          }
+        },
+        {
+          "name": "IPv6地址测试",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/query/2001:4860:4860::8888",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "2001:4860:4860::8888"]
+            }
+          }
+        },
+        {
+          "name": "私有IP地址测试",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/query/192.168.1.1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "192.168.1.1"]
+            }
+          }
+        },
+        {
+          "name": "无效IP地址测试",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/query/invalid.ip.address",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "invalid.ip.address"]
+            }
+          }
+        },
+        {
+          "name": "空IP批量查询测试",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ips\": [],\n  \"db_type\": \"city\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/query/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "query", "batch"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// 在每个请求前执行的脚本",
+          "console.log('发送请求到:', pm.request.url.toString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// 在每个响应后执行的脚本",
+          "pm.test('响应时间小于2秒', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "pm.test('响应状态码正确', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 400, 401, 403, 404, 422, 429, 500]);",
+          "});",
+          "",
+          "if (pm.response.headers.get('Content-Type') && pm.response.headers.get('Content-Type').includes('application/json')) {",
+          "    pm.test('响应为有效JSON', function () {",
+          "        pm.response.to.have.jsonBody();",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}
