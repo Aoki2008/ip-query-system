@@ -16,7 +16,11 @@
         </div>
       </template>
       
-      <el-table :data="users" v-loading="loading">
+      <MobileTable
+        :data="users"
+        v-loading="loading"
+        :mobile-columns="mobileColumns"
+      >
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="email" label="邮箱" />
@@ -53,7 +57,42 @@
             </el-button>
           </template>
         </el-table-column>
-      </el-table>
+
+        <!-- 移动端卡片模板 -->
+        <template #mobile-card="{ row }">
+          <div class="user-card">
+            <div class="user-header">
+              <h4>{{ row.username }}</h4>
+              <el-tag :type="row.is_active ? 'success' : 'danger'" size="small">
+                {{ row.is_active ? '激活' : '禁用' }}
+              </el-tag>
+            </div>
+            <div class="user-info">
+              <p><strong>邮箱:</strong> {{ row.email }}</p>
+              <p><strong>角色:</strong>
+                <el-tag :type="getRoleType(row.role)" size="small">
+                  {{ getRoleLabel(row.role) }}
+                </el-tag>
+              </p>
+              <p><strong>创建时间:</strong> {{ formatDate(row.created_at) }}</p>
+              <p v-if="row.last_login"><strong>最后登录:</strong> {{ formatDate(row.last_login) }}</p>
+            </div>
+          </div>
+        </template>
+
+        <!-- 移动端操作按钮 -->
+        <template #actions="{ row }">
+          <el-button type="primary" size="small">编辑</el-button>
+          <el-button type="info" size="small">角色</el-button>
+          <el-button
+            v-if="row.username !== 'admin'"
+            type="danger"
+            size="small"
+          >
+            删除
+          </el-button>
+        </template>
+      </MobileTable>
     </el-card>
   </div>
 </template>
@@ -63,9 +102,31 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import api from '@/utils/api'
+import MobileTable from '@/components/MobileTable.vue'
 
 const loading = ref(false)
 const users = ref([])
+
+// 移动端表格列配置
+const mobileColumns = [
+  { prop: 'username', label: '用户名' },
+  { prop: 'email', label: '邮箱' },
+  {
+    prop: 'role',
+    label: '角色',
+    formatter: (row: any) => getRoleLabel(row.role)
+  },
+  {
+    prop: 'is_active',
+    label: '状态',
+    formatter: (row: any) => row.is_active ? '激活' : '禁用'
+  },
+  {
+    prop: 'created_at',
+    label: '创建时间',
+    formatter: (row: any) => formatDate(row.created_at)
+  }
+]
 
 const loadUsers = async () => {
   try {
@@ -129,5 +190,106 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* 移动端用户卡片样式 */
+.user-card {
+  width: 100%;
+}
+
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-header h4 {
+  margin: 0;
+  color: #303133;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.user-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #606266;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-info strong {
+  min-width: 70px;
+  color: #303133;
+}
+
+/* 移动端响应式 */
+@media (max-width: 768px) {
+  .page-header {
+    margin-bottom: 20px;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .card-header span {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .user-header h4 {
+    font-size: 15px;
+  }
+
+  .user-info p {
+    font-size: 13px;
+  }
+
+  .user-info strong {
+    min-width: 60px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 18px;
+  }
+
+  .user-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .user-info p {
+    font-size: 12px;
+  }
+
+  .user-info strong {
+    min-width: 55px;
+    font-size: 12px;
+  }
 }
 </style>

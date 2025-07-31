@@ -7,7 +7,7 @@
 
     <!-- 统计卡片 -->
     <el-row :gutter="20" class="stats-row">
-      <el-col :span="6">
+      <el-col :xs="24" :sm="12" :md="6" :lg="6">
         <el-card class="stat-card">
           <div class="stat-content">
             <div class="stat-icon system">
@@ -20,8 +20,8 @@
           </div>
         </el-card>
       </el-col>
-      
-      <el-col :span="6">
+
+      <el-col :xs="24" :sm="12" :md="6" :lg="6">
         <el-card class="stat-card">
           <div class="stat-content">
             <div class="stat-icon users">
@@ -34,8 +34,8 @@
           </div>
         </el-card>
       </el-col>
-      
-      <el-col :span="6">
+
+      <el-col :xs="24" :sm="12" :md="6" :lg="6">
         <el-card class="stat-card">
           <div class="stat-content">
             <div class="stat-icon permissions">
@@ -49,7 +49,7 @@
         </el-card>
       </el-col>
       
-      <el-col :span="6">
+      <el-col :xs="24" :sm="12" :md="6" :lg="6">
         <el-card class="stat-card">
           <div class="stat-content">
             <div class="stat-icon roles">
@@ -66,7 +66,7 @@
 
     <!-- 快捷操作 -->
     <el-row :gutter="20" class="quick-actions">
-      <el-col :span="12">
+      <el-col :xs="24" :sm="24" :md="12" :lg="12">
         <el-card>
           <template #header>
             <h3>快捷操作</h3>
@@ -96,7 +96,7 @@
         </el-card>
       </el-col>
       
-      <el-col :span="12">
+      <el-col :xs="24" :sm="24" :md="12" :lg="12">
         <el-card>
           <template #header>
             <h3>系统信息</h3>

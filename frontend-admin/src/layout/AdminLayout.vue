@@ -1,34 +1,46 @@
 <template>
   <el-container class="admin-layout">
+    <!-- 移动端遮罩层 -->
+    <div
+      class="mobile-overlay"
+      :class="{ show: isMobile && showMobileSidebar }"
+      @click="hideMobileSidebar"
+    ></div>
+
     <!-- 侧边栏 -->
-    <el-aside :width="isCollapse ? '64px' : '200px'" class="sidebar">
+    <el-aside
+      :width="getSidebarWidth"
+      class="sidebar"
+      :class="{ 'mobile-show': isMobile && showMobileSidebar }"
+    >
       <div class="logo">
-        <h2 v-if="!isCollapse">管理后台</h2>
+        <h2 v-if="!isCollapse || isMobile">管理后台</h2>
         <h2 v-else>管</h2>
       </div>
-      
+
       <el-menu
         :default-active="$route.path"
-        :collapse="isCollapse"
+        :collapse="isCollapse && !isMobile"
         :unique-opened="true"
         router
         class="sidebar-menu"
+        @select="onMenuSelect"
       >
         <el-menu-item index="/dashboard">
           <el-icon><Monitor /></el-icon>
           <template #title>仪表板</template>
         </el-menu-item>
-        
+
         <el-menu-item index="/permissions">
           <el-icon><Lock /></el-icon>
           <template #title>权限管理</template>
         </el-menu-item>
-        
+
         <el-menu-item index="/users">
           <el-icon><User /></el-icon>
           <template #title>用户管理</template>
         </el-menu-item>
-        
+
         <el-menu-item index="/system">
           <el-icon><Setting /></el-icon>
           <template #title>系统设置</template>
@@ -81,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage, ElMessageBox } from 'element-plus'
@@ -101,13 +113,49 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const isCollapse = ref(false)
+const isMobile = ref(false)
+const showMobileSidebar = ref(false)
 
 const currentPageTitle = computed(() => {
   return route.meta.title as string || '未知页面'
 })
 
+const getSidebarWidth = computed(() => {
+  if (isMobile.value) {
+    return '200px'
+  }
+  return isCollapse.value ? '64px' : '200px'
+})
+
+// 检查是否为移动设备
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+  if (!isMobile.value) {
+    showMobileSidebar.value = false
+  }
+}
+
+// 切换侧边栏
 const toggleCollapse = () => {
-  isCollapse.value = !isCollapse.value
+  if (isMobile.value) {
+    showMobileSidebar.value = !showMobileSidebar.value
+  } else {
+    isCollapse.value = !isCollapse.value
+  }
+}
+
+// 隐藏移动端侧边栏
+const hideMobileSidebar = () => {
+  if (isMobile.value) {
+    showMobileSidebar.value = false
+  }
+}
+
+// 菜单选择事件
+const onMenuSelect = () => {
+  if (isMobile.value) {
+    showMobileSidebar.value = false
+  }
 }
 
 const handleCommand = async (command: string) => {
@@ -138,17 +186,44 @@ onMounted(async () => {
   if (authStore.isAuthenticated && !authStore.user) {
     await authStore.getProfile()
   }
+
+  // 初始化移动端检查
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
 })
 </script>
 
 <style scoped>
 .admin-layout {
   height: 100vh;
+  position: relative;
+}
+
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+  transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.show {
+  display: block;
 }
 
 .sidebar {
   background-color: #304156;
-  transition: width 0.3s;
+  transition: width 0.3s, transform 0.3s;
+  position: relative;
+  z-index: 1000;
 }
 
 .logo {
@@ -184,6 +259,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  height: 60px;
 }
 
 .header-left {
@@ -194,6 +270,17 @@ onMounted(async () => {
 
 .collapse-btn {
   font-size: 18px;
+  border: none;
+  background: none;
+  color: #606266;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.collapse-btn:hover {
+  background-color: #f5f7fa;
 }
 
 .header-right {
@@ -209,6 +296,7 @@ onMounted(async () => {
   padding: 8px 12px;
   border-radius: 4px;
   transition: background-color 0.3s;
+  color: #606266;
 }
 
 .user-info:hover {
@@ -218,5 +306,55 @@ onMounted(async () => {
 .main-content {
   background-color: #f0f2f5;
   padding: 20px;
+  min-height: calc(100vh - 60px);
+}
+
+/* 移动端样式 */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    width: 200px !important;
+  }
+
+  .sidebar.mobile-show {
+    transform: translateX(0);
+  }
+
+  .header {
+    padding: 0 15px;
+    height: 50px;
+  }
+
+  .header-left {
+    gap: 10px;
+  }
+
+  .collapse-btn {
+    font-size: 20px;
+  }
+
+  .main-content {
+    padding: 10px;
+    min-height: calc(100vh - 50px);
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0 10px;
+  }
+
+  .main-content {
+    padding: 8px;
+  }
+
+  .user-info {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
 }
 </style>

@@ -1,6 +1,5 @@
 ---
-type: "conditional_apply"
-priority: "high"
+type: "always_apply"
 ---
 
 # 📋 项目代码质量和安全规范
