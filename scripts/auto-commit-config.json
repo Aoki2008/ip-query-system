@@ -1,0 +1,94 @@
+{
+  "autoCommit": {
+    "enabled": true,
+    "description": "自动提交配置文件",
+    "version": "1.0.0"
+  },
+  "commitRules": {
+    "minLength": 10,
+    "maxLength": 100,
+    "requireType": false,
+    "allowedTypes": [
+      "feat",
+      "fix", 
+      "docs",
+      "style",
+      "refactor",
+      "test",
+      "chore",
+      "perf"
+    ]
+  },
+  "autoGenerate": {
+    "enabled": true,
+    "includeTimestamp": true,
+    "includeFileCount": true,
+    "typeMapping": {
+      "*.md": {
+        "emoji": "📝",
+        "scope": "docs",
+        "type": "docs"
+      },
+      "*.py": {
+        "emoji": "🐍", 
+        "scope": "backend",
+        "type": "feat"
+      },
+      "*.vue,*.ts,*.js": {
+        "emoji": "🌐",
+        "scope": "frontend", 
+        "type": "feat"
+      },
+      "docker*,*.yml,*.yaml": {
+        "emoji": "🐳",
+        "scope": "deploy",
+        "type": "chore"
+      },
+      "*.json,package*": {
+        "emoji": "📦",
+        "scope": "deps",
+        "type": "chore"
+      },
+      "*.sh,*.bat,*.ps1": {
+        "emoji": "🔧",
+        "scope": "scripts",
+        "type": "chore"
+      }
+    }
+  },
+  "autoPush": {
+    "enabled": false,
+    "branches": ["main", "master"],
+    "askConfirmation": true,
+    "skipOnCI": true
+  },
+  "hooks": {
+    "preCommit": {
+      "enabled": true,
+      "runLinting": true,
+      "runTests": false,
+      "checkSensitiveData": true
+    },
+    "postCommit": {
+      "enabled": true,
+      "autoPush": false,
+      "askPush": true
+    },
+    "commitMsg": {
+      "enabled": true,
+      "validateLength": true,
+      "validateFormat": false,
+      "checkSensitive": true
+    }
+  },
+  "notifications": {
+    "success": true,
+    "errors": true,
+    "warnings": true
+  },
+  "logging": {
+    "enabled": true,
+    "logFile": "logs/auto-commit.log",
+    "logLevel": "info"
+  }
+}

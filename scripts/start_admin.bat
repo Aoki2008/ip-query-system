@@ -3,19 +3,19 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo.
-echo 🌐 IP查询系统 - 前端服务启动脚本
+echo 🛡️ IP查询系统 - 管理后台启动脚本
 echo ==========================================
 
 REM 检查是否在项目根目录
-if not exist "frontend-vue3" (
+if not exist "frontend-admin" (
     echo ❌ 错误: 请在项目根目录运行此脚本
     echo 当前目录: %CD%
     pause
     exit /b 1
 )
 
-echo 📁 切换到前端目录...
-cd frontend-vue3
+echo 📁 切换到管理后台目录...
+cd frontend-admin
 
 echo 📦 检查Node.js环境...
 node --version >nul 2>&1
@@ -56,13 +56,14 @@ if errorlevel 1 (
 echo ✅ 依赖包检查完成
 
 echo.
-echo 🚀 启动Vue3开发服务器...
-echo 📍 用户前端: http://localhost:5173
+echo 🚀 启动管理后台开发服务器...
+echo 📍 管理后台: http://localhost:5174
+echo 🔐 默认账户: admin / admin123
 echo 🛑 按 Ctrl+C 停止服务
 echo.
 
 npm run dev
 
 echo.
-echo 🛑 前端服务已停止
+echo 🛑 管理后台服务已停止
 pause
