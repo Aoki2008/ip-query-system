@@ -34,9 +34,15 @@
               </el-tag>
             </div>
             <div class="info-item">
+              <span class="label">国家数据库：</span>
+              <el-tag :type="databaseInfo.database_status?.country_db ? 'success' : 'danger'">
+                {{ databaseInfo.current_databases?.country_db || '未设置' }}
+              </el-tag>
+            </div>
+            <div class="info-item">
               <span class="label">数据库状态：</span>
-              <el-tag :type="(databaseInfo.database_status?.city_db && databaseInfo.database_status?.asn_db) ? 'success' : 'warning'">
-                {{ (databaseInfo.database_status?.city_db && databaseInfo.database_status?.asn_db) ? '全部已加载' : '部分未加载' }}
+              <el-tag :type="getDatabaseStatusType()">
+                {{ getDatabaseStatusText() }}
               </el-tag>
             </div>
           </div>
@@ -123,6 +129,58 @@
                         </span>
                         <el-tag
                           v-if="key === databaseInfo.current_databases?.asn_db"
+                          type="success"
+                          size="small"
+                          class="current-tag"
+                        >
+                          当前使用
+                        </el-tag>
+                      </div>
+                      <div class="db-details">
+                        <div class="db-info">
+                          <span class="db-path">{{ db.path }}</span>
+                          <span class="db-size">({{ db.size_mb }}MB)</span>
+                          <el-tag
+                            :type="getStatusTagType(db.status)"
+                            size="small"
+                          >
+                            {{ db.status }}
+                          </el-tag>
+                        </div>
+                        <div class="db-description">
+                          {{ db.source_location }}
+                        </div>
+                      </div>
+                    </div>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="国家数据库">
+                <el-select
+                  v-model="switchForm.countryDb"
+                  placeholder="选择国家数据库文件"
+                  style="width: 100%"
+                  popper-class="database-file-dropdown"
+                >
+                  <el-option
+                    v-for="(db, key) in detailedDatabaseInfo.country_databases"
+                    :key="key"
+                    :label="db.display_name"
+                    :value="key"
+                    :disabled="key === databaseInfo.current_databases?.country_db"
+                    class="db-option"
+                  >
+                    <div class="db-option-content">
+                      <div class="db-header">
+                        <span class="db-name">
+                          <el-icon v-if="key === databaseInfo.current_databases?.country_db" class="current-icon">
+                            <Check />
+                          </el-icon>
+                          {{ db.display_name }}
+                        </span>
+                        <el-tag
+                          v-if="key === databaseInfo.current_databases?.country_db"
                           type="success"
                           size="small"
                           class="current-tag"
@@ -312,27 +370,32 @@ const refreshingStats = ref(false)
 const databaseInfo = ref({
   current_databases: {
     city_db: '',
-    asn_db: ''
+    asn_db: '',
+    country_db: ''
   },
   available_databases: {},
   database_status: {
     city_db: false,
-    asn_db: false
+    asn_db: false,
+    country_db: false
   },
   database_files: {
     city_databases: [],
-    asn_databases: []
+    asn_databases: [],
+    country_databases: []
   }
 })
 
 const detailedDatabaseInfo = ref({
   current_databases: {
     city_db: '',
-    asn_db: ''
+    asn_db: '',
+    country_db: ''
   },
   database_details: {},
   city_databases: {},
-  asn_databases: {}
+  asn_databases: {},
+  country_databases: {}
 })
 
 const systemStats = ref({
@@ -345,7 +408,8 @@ const systemStats = ref({
 
 const switchForm = ref({
   cityDb: '',
-  asnDb: ''
+  asnDb: '',
+  countryDb: ''
 })
 
 // 计算属性
@@ -378,10 +442,31 @@ const databaseTableData = computed(() => {
 const canSwitchDatabase = computed(() => {
   const hasChanges = (
     (switchForm.value.cityDb && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) ||
-    (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db)
+    (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) ||
+    (switchForm.value.countryDb && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db)
   )
   return hasChanges
 })
+
+// 计算数据库状态类型
+const getDatabaseStatusType = () => {
+  const { city_db, asn_db, country_db } = databaseInfo.value.database_status || {}
+  const loadedCount = [city_db, asn_db, country_db].filter(Boolean).length
+
+  if (loadedCount === 3) return 'success'
+  if (loadedCount === 0) return 'danger'
+  return 'warning'
+}
+
+// 计算数据库状态文本
+const getDatabaseStatusText = () => {
+  const { city_db, asn_db, country_db } = databaseInfo.value.database_status || {}
+  const loadedCount = [city_db, asn_db, country_db].filter(Boolean).length
+
+  if (loadedCount === 3) return '全部已加载'
+  if (loadedCount === 0) return '未加载'
+  return `部分已加载 (${loadedCount}/3)`
+}
 
 // 方法
 const getSourceDisplayName = (source: string) => {
@@ -514,6 +599,10 @@ const switchDatabase = async () => {
       const dbInfo = detailedDatabaseInfo.value.asn_databases[switchForm.value.asnDb]
       changes.push(`ASN数据库: ${dbInfo?.display_name}`)
     }
+    if (switchForm.value.countryDb && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db) {
+      const dbInfo = detailedDatabaseInfo.value.country_databases[switchForm.value.countryDb]
+      changes.push(`国家数据库: ${dbInfo?.display_name}`)
+    }
 
     await ElMessageBox.confirm(
       `确定要切换以下数据库吗？\n${changes.join('\n')}`,
@@ -534,6 +623,9 @@ const switchDatabase = async () => {
     if (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) {
       requestData.asn_db_key = switchForm.value.asnDb
     }
+    if (switchForm.value.countryDb && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db) {
+      requestData.country_db_key = switchForm.value.countryDb
+    }
 
     const response = await api.post('/admin/system/database/switch', requestData)
 
@@ -544,6 +636,7 @@ const switchDatabase = async () => {
       // 重置表单
       switchForm.value.cityDb = ''
       switchForm.value.asnDb = ''
+      switchForm.value.countryDb = ''
     } else {
       ElMessage.error(response.data.message)
     }
@@ -566,7 +659,7 @@ const testDatabase = async () => {
       const result = response.data.test_result
       const currentDbs = response.data.current_databases
       ElMessage.success({
-        message: `测试成功！当前配置 (城市: ${currentDbs.city_db}, ASN: ${currentDbs.asn_db})，查询 ${result.ip}，结果：${result.country}，耗时：${(result.query_time * 1000).toFixed(2)}ms`,
+        message: `测试成功！当前配置 (城市: ${currentDbs.city_db || '未设置'}, ASN: ${currentDbs.asn_db || '未设置'}, 国家: ${currentDbs.country_db || '未设置'})，查询 ${result.ip}，结果：${result.country}，耗时：${(result.query_time * 1000).toFixed(2)}ms`,
         duration: 5000
       })
     } else {

@@ -18,8 +18,9 @@ router = APIRouter(prefix="/api/admin/system", tags=["系统管理"])
 
 class DatabaseFileSwitchRequest(BaseModel):
     """数据库文件切换请求"""
-    city_db_key: str = None  # 城市数据库文件key
-    asn_db_key: str = None   # ASN数据库文件key
+    city_db_key: str = None     # 城市数据库文件key
+    asn_db_key: str = None      # ASN数据库文件key
+    country_db_key: str = None  # 国家数据库文件key
 
 
 class DatabaseFileSwitchResponse(BaseModel):
@@ -86,7 +87,8 @@ async def switch_database_files(
     try:
         result = await geoip_service.switch_database_file(
             city_db_key=request.city_db_key,
-            asn_db_key=request.asn_db_key
+            asn_db_key=request.asn_db_key,
+            country_db_key=request.country_db_key
         )
 
         if result["success"]:
@@ -95,6 +97,8 @@ async def switch_database_files(
                 changes_desc.append(f"城市数据库: {request.city_db_key}")
             if request.asn_db_key:
                 changes_desc.append(f"ASN数据库: {request.asn_db_key}")
+            if request.country_db_key:
+                changes_desc.append(f"国家数据库: {request.country_db_key}")
 
             logger.info(f"管理员 {current_user.username} 切换数据库文件: {', '.join(changes_desc)}")
             return DatabaseFileSwitchResponse(**result)
@@ -171,7 +175,8 @@ async def test_current_databases(
             "message": f"当前数据库配置测试成功",
             "current_databases": {
                 "city_db": geoip_service.current_city_db,
-                "asn_db": geoip_service.current_asn_db
+                "asn_db": geoip_service.current_asn_db,
+                "country_db": geoip_service.current_country_db
             },
             "test_result": {
                 "ip": test_result.ip,

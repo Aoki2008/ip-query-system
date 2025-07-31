@@ -23,13 +23,15 @@ class AsyncGeoIPService:
     """异步GeoIP查询服务"""
 
     def __init__(self):
-        self.db_reader: Optional[geoip2.database.Reader] = None
-        self.asn_reader: Optional[geoip2.database.Reader] = None
+        self.db_reader: Optional[geoip2.database.Reader] = None  # 城市数据库读取器
+        self.asn_reader: Optional[geoip2.database.Reader] = None  # ASN数据库读取器
+        self.country_reader: Optional[geoip2.database.Reader] = None  # 国家数据库读取器
         self.executor: Optional[ThreadPoolExecutor] = None
-        # 改为独立的数据库文件选择
-        self.current_city_db: str = ""  # 当前使用的城市数据库文件key
-        self.current_asn_db: str = ""   # 当前使用的ASN数据库文件key
-        self.available_databases = {}  # 存储可用的数据库信息
+        # 独立的数据库文件选择
+        self.current_city_db: str = ""     # 当前使用的城市数据库文件key
+        self.current_asn_db: str = ""      # 当前使用的ASN数据库文件key
+        self.current_country_db: str = ""  # 当前使用的国家数据库文件key
+        self.available_databases = {}      # 存储可用的数据库信息
         self.stats = {
             "total_queries": 0,
             "successful_queries": 0,
@@ -38,6 +40,7 @@ class AsyncGeoIPService:
             "avg_query_time": 0.0,
             "current_city_db": "",
             "current_asn_db": "",
+            "current_country_db": "",
             "available_databases": []
         }
     
@@ -107,6 +110,8 @@ class AsyncGeoIPService:
                 return db_key == self.current_city_db and self.db_reader is not None
             elif db_info["type"] == "asn":
                 return db_key == self.current_asn_db and self.asn_reader is not None
+            elif db_info["type"] == "country":
+                return db_key == self.current_country_db and self.country_reader is not None
             return False
         except:
             return False
@@ -149,6 +154,7 @@ class AsyncGeoIPService:
         # 检查API目录数据库
         api_city_path = Path("API/GeoLite2-City.mmdb")
         api_asn_path = Path("API/GeoLite2-ASN.mmdb")
+        api_country_path = Path("API/GeoLite2-Country.mmdb")
 
         if api_city_path.exists():
             db_key = "api_city"
@@ -173,6 +179,19 @@ class AsyncGeoIPService:
                 "display_name": f"ASN数据库 (API目录)",
                 "file_name": api_asn_path.name,
                 **self._get_file_info(api_asn_path)
+            }
+            available_db_keys.append(db_key)
+
+        if api_country_path.exists():
+            db_key = "api_country"
+            self.available_databases[db_key] = {
+                "key": db_key,
+                "path": str(api_country_path),
+                "type": "country",
+                "source_location": "API目录",
+                "display_name": f"国家数据库 (API目录)",
+                "file_name": api_country_path.name,
+                **self._get_file_info(api_country_path)
             }
             available_db_keys.append(db_key)
 
@@ -202,11 +221,18 @@ class AsyncGeoIPService:
             # 优先选择本地ASN数据库
             self.current_asn_db = next((key for key in asn_dbs if key.startswith("local_")), asn_dbs[0])
 
+        # 为国家数据库选择默认值
+        country_dbs = [key for key, db in self.available_databases.items() if db["type"] == "country"]
+        if country_dbs:
+            # 优先选择本地国家数据库，如果没有则选择API目录的
+            self.current_country_db = next((key for key in country_dbs if key.startswith("local_")), country_dbs[0])
+
         # 更新统计信息
         self.stats["current_city_db"] = self.current_city_db
         self.stats["current_asn_db"] = self.current_asn_db
+        self.stats["current_country_db"] = self.current_country_db
 
-        logger.info(f"默认数据库设置 - 城市: {self.current_city_db}, ASN: {self.current_asn_db}")
+        logger.info(f"默认数据库设置 - 城市: {self.current_city_db}, ASN: {self.current_asn_db}, 国家: {self.current_country_db}")
 
     async def _initialize_readers(self) -> None:
         """根据当前数据源初始化读取器"""
@@ -224,9 +250,16 @@ class AsyncGeoIPService:
                 )
                 self.asn_reader = None
 
+            if self.country_reader:
+                await asyncio.get_event_loop().run_in_executor(
+                    self.executor, self.country_reader.close
+                )
+                self.country_reader = None
+
             # 根据选择的数据库文件获取路径
             city_db_path = None
             asn_db_path = None
+            country_db_path = None
 
             # 获取城市数据库路径
             if self.current_city_db and self.current_city_db in self.available_databases:
@@ -237,6 +270,11 @@ class AsyncGeoIPService:
             if self.current_asn_db and self.current_asn_db in self.available_databases:
                 asn_db_info = self.available_databases[self.current_asn_db]
                 asn_db_path = asn_db_info["path"]
+
+            # 获取国家数据库路径
+            if self.current_country_db and self.current_country_db in self.available_databases:
+                country_db_info = self.available_databases[self.current_country_db]
+                country_db_path = country_db_info["path"]
 
             # 初始化城市数据库
             if city_db_path and Path(city_db_path).exists():
@@ -262,9 +300,22 @@ class AsyncGeoIPService:
             else:
                 logger.warning(f"未找到可用的ASN数据库: {self.current_asn_db}")
 
+            # 初始化国家数据库
+            if country_db_path and Path(country_db_path).exists():
+                self.country_reader = await asyncio.get_event_loop().run_in_executor(
+                    self.executor,
+                    geoip2.database.Reader,
+                    country_db_path
+                )
+
+                logger.info(f"国家数据库初始化成功: {country_db_path} ({self.current_country_db})")
+            else:
+                logger.warning(f"未找到可用的国家数据库: {self.current_country_db}")
+
             # 更新统计信息
             self.stats["current_city_db"] = self.current_city_db
             self.stats["current_asn_db"] = self.current_asn_db
+            self.stats["current_country_db"] = self.current_country_db
 
             # 更新数据库状态
             self._update_database_status()
@@ -290,6 +341,13 @@ class AsyncGeoIPService:
                 )
                 self.asn_reader = None
 
+            if self.country_reader:
+                await asyncio.get_event_loop().run_in_executor(
+                    self.executor,
+                    self.country_reader.close
+                )
+                self.country_reader = None
+
             if self.executor:
                 self.executor.shutdown(wait=True)
                 self.executor = None
@@ -302,37 +360,51 @@ class AsyncGeoIPService:
     def _query_ip_sync(self, ip: str) -> Dict[str, Any]:
         """同步查询IP信息（在线程池中执行）"""
         try:
-            if not self.db_reader:
-                raise GeoIPException("GeoIP数据库未初始化")
-            
-            # 查询城市信息
-            response = self.db_reader.city(ip)
-            
-            # 提取位置信息
-            location = LocationInfo(
-                country=response.country.name,
-                country_code=response.country.iso_code,
-                region=response.subdivisions.most_specific.name,
-                region_code=response.subdivisions.most_specific.iso_code,
-                city=response.city.name,
-                postal_code=response.postal.code,
-                latitude=float(response.location.latitude) if response.location.latitude else None,
-                longitude=float(response.location.longitude) if response.location.longitude else None,
-                timezone=response.location.time_zone
-            )
+            # 初始化位置信息
+            location = LocationInfo()
+
+            # 优先使用城市数据库获取详细位置信息
+            if self.db_reader:
+                try:
+                    response = self.db_reader.city(ip)
+                    location = LocationInfo(
+                        country=response.country.name,
+                        country_code=response.country.iso_code,
+                        region=response.subdivisions.most_specific.name,
+                        region_code=response.subdivisions.most_specific.iso_code,
+                        city=response.city.name,
+                        postal_code=response.postal.code,
+                        latitude=float(response.location.latitude) if response.location.latitude else None,
+                        longitude=float(response.location.longitude) if response.location.longitude else None,
+                        timezone=response.location.time_zone
+                    )
+                except geoip2.errors.AddressNotFoundError:
+                    # 如果城市数据库中找不到，继续尝试其他数据库
+                    pass
+
+            # 如果没有城市数据库或城市数据库中找不到，尝试使用国家数据库
+            if not location.country and self.country_reader:
+                try:
+                    country_response = self.country_reader.country(ip)
+                    location.country = country_response.country.name
+                    location.country_code = country_response.country.iso_code
+                except geoip2.errors.AddressNotFoundError:
+                    pass
             
             # 提取ISP信息
             isp = ISPInfo()
 
             # 首先尝试从城市数据库获取ASN信息
-            try:
-                if hasattr(response, 'traits') and response.traits.autonomous_system_number:
-                    isp.asn = str(response.traits.autonomous_system_number)
-                    isp.asn_organization = response.traits.autonomous_system_organization
-                    isp.isp = response.traits.autonomous_system_organization
-                    isp.organization = response.traits.autonomous_system_organization
-            except:
-                pass
+            if self.db_reader:
+                try:
+                    city_response = self.db_reader.city(ip)
+                    if hasattr(city_response, 'traits') and city_response.traits.autonomous_system_number:
+                        isp.asn = str(city_response.traits.autonomous_system_number)
+                        isp.asn_organization = city_response.traits.autonomous_system_organization
+                        isp.isp = city_response.traits.autonomous_system_organization
+                        isp.organization = city_response.traits.autonomous_system_organization
+                except:
+                    pass
 
             # 如果有专门的ASN数据库，使用它获取更详细的ISP信息
             if self.asn_reader and (not isp.asn or not isp.isp):
@@ -436,8 +508,12 @@ class AsyncGeoIPService:
         start_time = time.time()
         
         try:
-            if not self.db_reader or not self.executor:
+            # 检查是否至少有一个数据库可用
+            if not self.executor:
                 raise GeoIPException("GeoIP服务未初始化")
+
+            if not (self.db_reader or self.asn_reader or self.country_reader):
+                raise GeoIPException("没有可用的数据库")
             
             # 在线程池中执行查询
             result = await asyncio.get_event_loop().run_in_executor(
@@ -530,11 +606,12 @@ class AsyncGeoIPService:
                 self.stats["total_query_time"] / self.stats["total_queries"]
             )
     
-    async def switch_database_file(self, city_db_key: str = None, asn_db_key: str = None) -> Dict[str, Any]:
+    async def switch_database_file(self, city_db_key: str = None, asn_db_key: str = None, country_db_key: str = None) -> Dict[str, Any]:
         """切换数据库文件"""
         try:
             old_city_db = self.current_city_db
             old_asn_db = self.current_asn_db
+            old_country_db = self.current_country_db
 
             # 验证并设置城市数据库
             if city_db_key is not None:
@@ -552,6 +629,14 @@ class AsyncGeoIPService:
                     raise ValueError(f"数据库类型错误: {asn_db_key} 不是ASN数据库")
                 self.current_asn_db = asn_db_key
 
+            # 验证并设置国家数据库
+            if country_db_key is not None:
+                if country_db_key not in self.available_databases:
+                    raise ValueError(f"不支持的国家数据库: {country_db_key}")
+                if self.available_databases[country_db_key]["type"] != "country":
+                    raise ValueError(f"数据库类型错误: {country_db_key} 不是国家数据库")
+                self.current_country_db = country_db_key
+
             # 重新初始化读取器
             await self._initialize_readers()
 
@@ -560,6 +645,8 @@ class AsyncGeoIPService:
                 changes.append(f"城市数据库: {old_city_db} → {self.current_city_db}")
             if asn_db_key is not None:
                 changes.append(f"ASN数据库: {old_asn_db} → {self.current_asn_db}")
+            if country_db_key is not None:
+                changes.append(f"国家数据库: {old_country_db} → {self.current_country_db}")
 
             logger.info(f"数据库文件已切换: {', '.join(changes)}")
 
@@ -568,11 +655,13 @@ class AsyncGeoIPService:
                 "message": f"数据库文件已切换: {', '.join(changes)}",
                 "changes": {
                     "city_db": {"old": old_city_db, "new": self.current_city_db},
-                    "asn_db": {"old": old_asn_db, "new": self.current_asn_db}
+                    "asn_db": {"old": old_asn_db, "new": self.current_asn_db},
+                    "country_db": {"old": old_country_db, "new": self.current_country_db}
                 },
                 "current_databases": {
                     "city_db": self.current_city_db,
-                    "asn_db": self.current_asn_db
+                    "asn_db": self.current_asn_db,
+                    "country_db": self.current_country_db
                 }
             }
 
@@ -583,7 +672,8 @@ class AsyncGeoIPService:
                 "message": f"切换数据库文件失败: {str(e)}",
                 "current_databases": {
                     "city_db": self.current_city_db,
-                    "asn_db": self.current_asn_db
+                    "asn_db": self.current_asn_db,
+                    "country_db": self.current_country_db
                 }
             }
 
@@ -592,16 +682,19 @@ class AsyncGeoIPService:
         return {
             "current_databases": {
                 "city_db": self.current_city_db,
-                "asn_db": self.current_asn_db
+                "asn_db": self.current_asn_db,
+                "country_db": self.current_country_db
             },
             "available_databases": self.available_databases,
             "database_status": {
                 "city_db": self.db_reader is not None,
-                "asn_db": self.asn_reader is not None
+                "asn_db": self.asn_reader is not None,
+                "country_db": self.country_reader is not None
             },
             "database_files": {
                 "city_databases": [key for key, db in self.available_databases.items() if db["type"] == "city"],
-                "asn_databases": [key for key, db in self.available_databases.items() if db["type"] == "asn"]
+                "asn_databases": [key for key, db in self.available_databases.items() if db["type"] == "asn"],
+                "country_databases": [key for key, db in self.available_databases.items() if db["type"] == "country"]
             }
         }
 
@@ -623,21 +716,25 @@ class AsyncGeoIPService:
                 "status": db_info["status"],
                 "is_current": (
                     (db_info["type"] == "city" and db_key == self.current_city_db) or
-                    (db_info["type"] == "asn" and db_key == self.current_asn_db)
+                    (db_info["type"] == "asn" and db_key == self.current_asn_db) or
+                    (db_info["type"] == "country" and db_key == self.current_country_db)
                 )
             }
         # 按类型分组数据库
         city_databases = {k: v for k, v in database_details.items() if v["type"] == "city"}
         asn_databases = {k: v for k, v in database_details.items() if v["type"] == "asn"}
+        country_databases = {k: v for k, v in database_details.items() if v["type"] == "country"}
 
         return {
             "current_databases": {
                 "city_db": self.current_city_db,
-                "asn_db": self.current_asn_db
+                "asn_db": self.current_asn_db,
+                "country_db": self.current_country_db
             },
             "database_details": database_details,
             "city_databases": city_databases,
-            "asn_databases": asn_databases
+            "asn_databases": asn_databases,
+            "country_databases": country_databases
         }
 
     async def get_service_stats(self) -> Dict[str, Any]:
