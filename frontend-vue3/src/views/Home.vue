@@ -152,19 +152,19 @@
       <div class="features-section">
         <div class="features-grid">
           <GlassContainer variant="card" class="feature-card">
-            <div class="feature-icon">●</div>
+            <FeatureIcon type="search" />
             <h3>精准查询</h3>
             <p>基于MaxMind数据库，提供准确的IP地理位置信息</p>
           </GlassContainer>
 
           <GlassContainer variant="card" class="feature-card">
-            <div class="feature-icon">●</div>
+            <FeatureIcon type="batch" />
             <h3>批量处理</h3>
             <p>支持最多100个IP地址同时查询，提高工作效率</p>
           </GlassContainer>
 
           <GlassContainer variant="card" class="feature-card">
-            <div class="feature-icon">●</div>
+            <FeatureIcon type="export" />
             <h3>数据导出</h3>
             <p>支持CSV、JSON、Excel多种格式导出查询结果</p>
           </GlassContainer>
@@ -179,6 +179,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import GlassContainer from '../components/GlassContainer.vue'
+import FeatureIcon from '../components/FeatureIcon.vue'
 import { ipService, fileService } from '../services/ipService'
 
 // 响应式数据
@@ -588,10 +589,7 @@ onMounted(() => {
   transform: translateY(-4px);
 }
 
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: var(--space-md);
-}
+/* 原有的 feature-icon 样式已移至 FeatureIcon 组件中 */
 
 .feature-card h3 {
   color: var(--text-primary);

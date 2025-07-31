@@ -144,16 +144,48 @@
 ├── 🔧 backend-fastapi/        # 后端API (FastAPI)
 ├── ⚙️ config/                # 配置文件
 ├── 🛠️ scripts/               # 工具脚本
+│   ├── auto-backup.ps1       # 自动备份脚本
+│   ├── smart-backup.ps1      # 智能备份脚本
+│   ├── schedule-backup.ps1   # 定时备份脚本
+│   └── backup-config.json    # 备份配置文件
 ├── 📚 docs/                  # 项目文档
+│   └── backup-guide.md       # 备份使用指南
 ├── 💾 data/                  # 数据文件
-└── 📋 配置文件
+├── 📋 配置文件
+└── backup.bat                # 快速备份批处理
 ```
+
+## 📦 自动备份功能
+
+### 🚀 快速备份
+```bash
+# 使用批处理文件（推荐）
+backup.bat
+
+# 使用PowerShell脚本
+powershell -ExecutionPolicy Bypass -File "scripts\auto-backup.ps1"
+```
+
+### ⏰ 定时备份
+```powershell
+# 设置每天23:00自动备份
+powershell -ExecutionPolicy Bypass -File "scripts\schedule-backup.ps1"
+```
+
+### 🤖 智能备份
+```powershell
+# 基于配置文件的智能备份
+powershell -ExecutionPolicy Bypass -File "scripts\smart-backup.ps1"
+```
+
+详细使用说明请查看：[备份使用指南](docs/backup-guide.md)
 
 ## 📚 文档资源
 
 - **📖 项目架构**: [PROJECT_ARCHITECTURE.md](PROJECT_ARCHITECTURE.md)
 - **📋 任务跟踪**: [docs/01-project-overview/Aotd.md](docs/01-project-overview/Aotd.md)
 - **🔧 部署指南**: [docs/04-deployment-guides/DEPLOYMENT.md](docs/04-deployment-guides/DEPLOYMENT.md)
+- **📦 备份指南**: [docs/backup-guide.md](docs/backup-guide.md)
 - **📝 开发日志**: [log.md](log.md)
 - **🔗 API文档**: http://localhost:8000/docs (启动后访问)
 
