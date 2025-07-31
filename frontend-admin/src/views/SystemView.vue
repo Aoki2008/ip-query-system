@@ -51,6 +51,7 @@
                   v-model="switchForm.source"
                   placeholder="选择数据源"
                   style="width: 100%"
+                  popper-class="database-source-dropdown"
                 >
                   <el-option
                     v-for="source in databaseInfo.available_sources"
@@ -58,11 +59,55 @@
                     :label="getSourceDisplayName(source)"
                     :value="source"
                     :disabled="source === databaseInfo.current_source"
+                    class="source-option"
                   >
-                    <span>{{ getSourceDisplayName(source) }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px">
-                      {{ getSourceDescription(source) }}
-                    </span>
+                    <div class="source-option-content">
+                      <div class="source-header">
+                        <span class="source-name">
+                          <el-icon v-if="source === databaseInfo.current_source" class="current-icon">
+                            <Check />
+                          </el-icon>
+                          {{ getSourceDisplayName(source) }}
+                        </span>
+                        <el-tag
+                          v-if="source === databaseInfo.current_source"
+                          type="success"
+                          size="small"
+                          class="current-tag"
+                        >
+                          当前使用
+                        </el-tag>
+                      </div>
+                      <div class="source-details" v-if="detailedSourceInfo.source_details?.[source]">
+                        <div class="db-info">
+                          <div class="db-item">
+                            <span class="db-label">城市数据库:</span>
+                            <span class="db-path">{{ detailedSourceInfo.source_details[source].city_db.path }}</span>
+                            <span class="db-size">({{ detailedSourceInfo.source_details[source].city_db.size_mb }}MB)</span>
+                            <el-tag
+                              :type="getStatusTagType(detailedSourceInfo.source_details[source].city_db.status)"
+                              size="small"
+                            >
+                              {{ detailedSourceInfo.source_details[source].city_db.status }}
+                            </el-tag>
+                          </div>
+                          <div class="db-item">
+                            <span class="db-label">ASN数据库:</span>
+                            <span class="db-path">{{ detailedSourceInfo.source_details[source].asn_db.path }}</span>
+                            <span class="db-size">({{ detailedSourceInfo.source_details[source].asn_db.size_mb }}MB)</span>
+                            <el-tag
+                              :type="getStatusTagType(detailedSourceInfo.source_details[source].asn_db.status)"
+                              size="small"
+                            >
+                              {{ detailedSourceInfo.source_details[source].asn_db.status }}
+                            </el-tag>
+                          </div>
+                        </div>
+                        <div class="source-description">
+                          {{ detailedSourceInfo.source_details[source].description }}
+                        </div>
+                      </div>
+                    </div>
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -216,7 +261,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Refresh, Monitor, Search } from '@element-plus/icons-vue'
+import { Refresh, Monitor, Search, Check } from '@element-plus/icons-vue'
 import api from '@/utils/api'
 
 // 响应式数据
@@ -237,6 +282,11 @@ const databaseInfo = ref({
   }
 })
 
+const detailedSourceInfo = ref({
+  current_source: '',
+  source_details: {}
+})
+
 const systemStats = ref({
   total_queries: 0,
   successful_queries: 0,
@@ -254,12 +304,22 @@ const databaseTableData = computed(() => {
   const data = []
   const databases = databaseInfo.value.available_databases
 
-  for (const [key, path] of Object.entries(databases)) {
-    data.push({
-      name: key,
-      path: path,
-      status: '可用'
-    })
+  for (const [key, dbInfo] of Object.entries(databases)) {
+    // 处理新的数据结构
+    if (typeof dbInfo === 'object' && dbInfo !== null) {
+      data.push({
+        name: key,
+        path: dbInfo.path || '',
+        status: dbInfo.status || '未知'
+      })
+    } else {
+      // 兼容旧的数据结构
+      data.push({
+        name: key,
+        path: dbInfo,
+        status: '可用'
+      })
+    }
   }
 
   return data
@@ -293,6 +353,29 @@ const getSourceTagType = (source: string) => {
   return types[source] || 'info'
 }
 
+const getStatusTagType = (status: string) => {
+  const types = {
+    '已加载': 'success',
+    '可用': 'info',
+    '未加载': 'warning',
+    '不存在': 'danger',
+    '错误': 'danger'
+  }
+  return types[status] || 'info'
+}
+
+const fetchDetailedSourceInfo = async () => {
+  try {
+    console.log('🔍 获取详细数据源信息...')
+    const response = await api.get('/admin/system/database/sources/detailed')
+    detailedSourceInfo.value = response.data
+    console.log('✅ 详细数据源信息获取成功:', response.data)
+  } catch (error) {
+    console.error('❌ 获取详细数据源信息失败:', error)
+    ElMessage.error('获取详细数据源信息失败')
+  }
+}
+
 const refreshDatabaseInfo = async () => {
   loading.value = true
   try {
@@ -300,6 +383,9 @@ const refreshDatabaseInfo = async () => {
     const response = await api.get('/admin/system/database/info')
     console.log('✅ 数据库信息获取成功:', response.data)
     databaseInfo.value = response.data
+
+    // 同时获取详细数据源信息
+    await fetchDetailedSourceInfo()
   } catch (error) {
     console.error('❌ 获取数据库信息失败:', error)
     console.error('错误详情:', {
@@ -578,6 +664,143 @@ onMounted(async () => {
   .label {
     min-width: auto;
     margin-bottom: 5px;
+  }
+}
+
+/* 数据源下拉菜单样式 */
+.source-option-content {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.source-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.source-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #303133;
+  font-size: 14px;
+}
+
+.current-icon {
+  color: #67c23a;
+  font-size: 16px;
+}
+
+.current-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+}
+
+.source-details {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.db-info {
+  margin-bottom: 8px;
+}
+
+.db-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #606266;
+}
+
+.db-label {
+  font-weight: 600;
+  min-width: 70px;
+  color: #303133;
+}
+
+.db-path {
+  flex: 1;
+  color: #409eff;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.db-size {
+  color: #909399;
+  font-size: 11px;
+}
+
+.source-description {
+  font-size: 12px;
+  color: #909399;
+  font-style: italic;
+  margin-top: 4px;
+}
+</style>
+
+<style>
+/* 全局样式 - 数据源下拉菜单 */
+.database-source-dropdown {
+  max-width: 500px;
+}
+
+.database-source-dropdown .el-select-dropdown__item {
+  height: auto;
+  padding: 12px 20px;
+  line-height: 1.4;
+}
+
+.database-source-dropdown .el-select-dropdown__item.is-disabled {
+  background-color: #f5f7fa;
+  border-left: 3px solid #67c23a;
+}
+
+.database-source-dropdown .el-select-dropdown__item:hover {
+  background-color: #f0f9ff;
+}
+
+@media (max-width: 768px) {
+  .database-source-dropdown {
+    max-width: 90vw;
+  }
+
+  .database-source-dropdown .el-select-dropdown__item {
+    padding: 8px 12px;
+  }
+
+  .source-option-content {
+    padding: 6px 0;
+  }
+
+  .source-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .db-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .db-path {
+    max-width: 100%;
+    font-size: 10px;
+  }
+
+  .db-size {
+    font-size: 10px;
   }
 }
 </style>

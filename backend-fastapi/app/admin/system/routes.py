@@ -34,7 +34,7 @@ class DatabaseInfoResponse(BaseModel):
     """数据库信息响应"""
     current_source: str
     available_sources: list
-    available_databases: Dict[str, str]
+    available_databases: Dict[str, Any]
     database_status: Dict[str, bool]
 
 
@@ -58,6 +58,22 @@ async def get_database_info(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"获取数据库信息失败: {str(e)}"
+        )
+
+
+@router.get("/database/sources/detailed")
+async def get_detailed_source_info(
+    current_user: AdminUser = Depends(get_current_active_user)
+):
+    """获取详细的数据源信息，用于前端下拉菜单显示"""
+    try:
+        info = await geoip_service.get_detailed_source_info()
+        return info
+    except Exception as e:
+        logger.error(f"获取详细数据源信息失败: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"获取详细数据源信息失败: {str(e)}"
         )
 
 
