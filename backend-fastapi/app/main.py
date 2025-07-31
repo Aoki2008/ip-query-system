@@ -5,7 +5,7 @@ FastAPI主应用
 from contextlib import asynccontextmanager
 from typing import Dict, Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -212,8 +212,8 @@ def create_app() -> FastAPI:
             "service_type": "fastapi",
             "endpoints": {
                 "health": "/api/health",
-                "query_ip": "/api/query-ip?ip=<ip_address>",
-                "query_batch": "/api/query-batch",
+                "query_ip": "/api/query?ip=<ip_address>",
+                "batch_query": "/api/batch-query",
                 "stats": "/api/stats",
                 "cache_stats": "/api/cache/stats",
                 "cache_clear": "/api/cache/clear"
@@ -236,8 +236,8 @@ def create_app() -> FastAPI:
             "service_type": "fastapi",
             "endpoints": [
                 "/api/health",
-                "/api/query-ip",
-                "/api/query-batch",
+                "/api/query",
+                "/api/batch-query",
                 "/api/stats",
                 "/api/cache/stats",
                 "/api/cache/clear"

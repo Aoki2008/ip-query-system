@@ -1,0 +1,72 @@
+[
+  {
+    "test_name": "后端健康检查",
+    "status": "PASS",
+    "details": "状态: healthy",
+    "response_time": 2.050584316253662,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "API查询 8.8.8.8",
+    "status": "PASS",
+    "details": "国家: N/A, 城市: N/A",
+    "response_time": 0.004683732986450195,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "API查询 1.1.1.1",
+    "status": "PASS",
+    "details": "国家: N/A, 城市: N/A",
+    "response_time": 0.004251956939697266,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "API查询 114.114.114.114",
+    "status": "PASS",
+    "details": "国家: N/A, 城市: N/A",
+    "response_time": 0.00420069694519043,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "向后兼容端点",
+    "status": "PASS",
+    "details": "旧端点正常重定向到新端点",
+    "response_time": 0.004124164581298828,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "批量查询",
+    "status": "FAIL",
+    "details": "状态码: 403",
+    "response_time": 0.0023903846740722656,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "无效IP错误处理",
+    "status": "PASS",
+    "details": "正确返回400客户端错误",
+    "response_time": 0.004169940948486328,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "管理后台登录",
+    "status": "FAIL",
+    "details": "登录失败: unknown",
+    "response_time": 0.21538615226745605,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "前端页面访问",
+    "status": "WARN",
+    "details": "页面内容可能不完整",
+    "response_time": 0.040000200271606445,
+    "timestamp": "2025-08-01 06:44:51"
+  },
+  {
+    "test_name": "管理后台页面访问",
+    "status": "WARN",
+    "details": "页面内容可能不完整",
+    "response_time": 2.0389153957366943,
+    "timestamp": "2025-08-01 06:44:53"
+  }
+]

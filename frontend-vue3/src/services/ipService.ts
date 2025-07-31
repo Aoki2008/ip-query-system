@@ -97,7 +97,7 @@ export const ipService = {
   // 单个IP查询
   async queryIp(ip: string): Promise<IpQueryResult> {
     try {
-      const response = await apiClient.get<SingleIpResponse>(`/query-ip?ip=${encodeURIComponent(ip)}`)
+      const response = await apiClient.get<SingleIpResponse>(`/query?ip=${encodeURIComponent(ip)}`)
       if (response.data.success && response.data.data) {
         return response.data.data
       } else {
@@ -113,7 +113,7 @@ export const ipService = {
   async queryBatch(ips: string[]): Promise<IpQueryResult[]> {
     try {
       const requestData: BatchIpRequest = { ips }
-      const response = await apiClient.post<BatchIpResponse>('/query-batch', requestData)
+      const response = await apiClient.post<BatchIpResponse>('/batch-query', requestData)
 
       if (response.data.success && response.data.data) {
         return response.data.data.results

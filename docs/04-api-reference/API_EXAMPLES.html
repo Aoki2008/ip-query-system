@@ -396,15 +396,15 @@ print_r($result);
             <div class="tab-content" id="curl">
                 <h4>cURL 示例:</h4>
                 <div class="code-example"># 单个IP查询
-curl -X GET "http://localhost:8000/api/query/8.8.8.8"
+curl -X GET "http://localhost:8000/api/query?ip=8.8.8.8"
 
 # 批量查询
-curl -X POST "http://localhost:8000/api/query/batch" \
+curl -X POST "http://localhost:8000/api/batch-query" \
   -H "Content-Type: application/json" \
   -d '{"ips": ["8.8.8.8", "1.1.1.1"]}'
 
 # IP验证
-curl -X GET "http://localhost:8000/api/validate/8.8.8.8"
+curl -X GET "http://localhost:8000/api/validate?ip=8.8.8.8"
 
 # 获取数据库信息
 curl -X GET "http://localhost:8000/api/database/info"</div>

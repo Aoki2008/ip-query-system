@@ -17,14 +17,14 @@
 最基础的功能，查询单个IP地址的地理位置信息。
 
 ```bash
-curl "http://localhost:8000/api/query/8.8.8.8"
+curl "http://localhost:8000/api/query?ip=8.8.8.8"
 ```
 
 ### 2. 📊 批量IP查询
 一次性查询多个IP地址，提高查询效率。
 
 ```bash
-curl -X POST "http://localhost:8000/api/query/batch" \
+curl -X POST "http://localhost:8000/api/batch-query" \
   -H "Content-Type: application/json" \
   -d '{"ips": ["8.8.8.8", "1.1.1.1"]}'
 ```

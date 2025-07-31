@@ -738,7 +738,7 @@ const refreshDatabaseInfo = async () => {
     // 同时获取详细数据库文件信息
     await fetchDetailedDatabaseInfo()
   } catch (error) {
-    console.error('❌ 获取数据库信息失败:', error)
+    console.error('❌ 获取数据库信息失败:', error, {
       data: error.response?.data,
       config: {
         url: error.config?.url,

@@ -54,7 +54,7 @@ async def health_check():
     )
 
 
-@api_router.get("/query-ip", response_model=IPQueryResponse, tags=["查询"])
+@api_router.get("/query", response_model=IPQueryResponse, tags=["查询"])
 async def query_single_ip(
     ip: str = Query(..., description="要查询的IP地址", example="8.8.8.8"),
     request: Request = None,
@@ -121,7 +121,7 @@ async def query_single_ip(
         raise GeoIPException("查询服务暂时不可用")
 
 
-@api_router.post("/query-batch", response_model=BatchIPQueryResponse, tags=["查询"])
+@api_router.post("/batch-query", response_model=BatchIPQueryResponse, tags=["查询"])
 async def query_batch_ips(
     batch_request: BatchIPQueryRequest,
     request: Request = None,
@@ -199,13 +199,46 @@ async def query_batch_ips(
                 "query_type": "fastapi_async"
             }
         )
-        
+
     except ValueError as e:
         logger.warning(f"参数验证失败: {str(e)}")
         raise ValidationException(str(e))
     except Exception as e:
         logger.error(f"批量查询失败: {str(e)}", exc_info=True)
         raise GeoIPException("批量查询服务暂时不可用")
+
+
+# 向后兼容的重定向端点
+@api_router.get("/query-ip", response_model=IPQueryResponse, tags=["查询"], deprecated=True)
+async def query_single_ip_legacy(
+    ip: str = Query(..., description="要查询的IP地址", example="8.8.8.8"),
+    request: Request = None,
+    start_time: float = Depends(log_request_middleware)
+):
+    """单个IP查询接口 (已弃用)
+
+    ⚠️ 此端点已弃用，请使用 /api/query 替代
+
+    为了向后兼容而保留，将在未来版本中移除。
+    """
+    # 重定向到新端点
+    return await query_single_ip(ip, request, start_time)
+
+
+@api_router.post("/query-batch", response_model=BatchIPQueryResponse, tags=["查询"], deprecated=True)
+async def query_batch_ips_legacy(
+    batch_request: BatchIPQueryRequest,
+    request: Request = None,
+    start_time: float = Depends(log_request_middleware)
+):
+    """批量IP查询接口 (已弃用)
+
+    ⚠️ 此端点已弃用，请使用 /api/batch-query 替代
+
+    为了向后兼容而保留，将在未来版本中移除。
+    """
+    # 重定向到新端点
+    return await query_batch_ips(batch_request, request, start_time)
 
 
 @api_router.get("/stats", response_model=Dict[str, Any], tags=["统计"])

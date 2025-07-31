@@ -88,8 +88,8 @@
 ```
 GET  /api/health              # 健康检查
 GET  /api                     # API信息
-GET  /api/query-ip?ip=x.x.x.x # 单个IP查询
-POST /api/query-batch         # 批量IP查询
+GET  /api/query?ip=x.x.x.x    # 单个IP查询
+POST /api/batch-query         # 批量IP查询
 GET  /api/stats               # 统计信息
 GET  /api/monitoring/*        # 监控端点
 ```

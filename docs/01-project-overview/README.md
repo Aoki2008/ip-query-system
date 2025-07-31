@@ -134,7 +134,7 @@ Response: {"status": "healthy", "message": "IP查询API服务运行正常"}
 
 ### 单个IP查询
 ```http
-GET /api/query-ip?ip=8.8.8.8
+GET /api/query?ip=8.8.8.8
 Response: {
   "ip": "8.8.8.8",
   "country": "United States",
@@ -149,7 +149,7 @@ Response: {
 
 ### 批量IP查询
 ```http
-POST /api/query-batch
+POST /api/batch-query
 Content-Type: application/json
 Body: {"ips": ["8.8.8.8", "114.114.114.114"]}
 

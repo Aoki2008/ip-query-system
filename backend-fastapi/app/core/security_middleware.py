@@ -9,7 +9,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta
 
 from fastapi import Request, Response, HTTPException, status
-from fastapi.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
 from ..config import settings
@@ -164,6 +164,10 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         self.csrf_exempt_paths = {
             "/api/health",
             "/api/metrics",
+            "/api/admin/auth/login",  # 登录端点免于CSRF检查
+            "/api/admin/auth/register",  # 注册端点免于CSRF检查
+            "/api/batch-query",  # 批量查询端点免于CSRF检查
+            "/api/query-batch",  # 向后兼容的批量查询端点
             "/docs",
             "/redoc",
             "/openapi.json"
@@ -256,10 +260,16 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             if self._contains_malicious_patterns(key) or self._contains_malicious_patterns(value):
                 return False
         
-        # 检查请求头
+        # 检查请求头（跳过常见的浏览器头）
+        safe_headers = {
+            "user-agent", "accept", "accept-language", "accept-encoding",
+            "connection", "host", "referer", "origin", "sec-fetch-site",
+            "sec-fetch-mode", "sec-fetch-dest", "cache-control", "pragma"
+        }
         for key, value in request.headers.items():
-            if self._contains_malicious_patterns(value):
-                return False
+            if key.lower() not in safe_headers:
+                if self._contains_malicious_patterns(value):
+                    return False
         
         return True
     
@@ -289,10 +299,10 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             "../", "..\\", "..\\/", "..%2f", "..%5c", "%2e%2e%2f", "%2e%2e%5c"
         ]
         
-        # 命令注入模式
+        # 命令注入模式（移除常见的HTTP头字符）
         command_patterns = [
-            "|", "&", ";", "`", "$", "(", ")", "{", "}", "[", "]",
-            "&&", "||", "$(", "${", "<%", "%>", "<?", "?>"
+            "&&", "||", "$(", "${", "<%", "%>", "<?", "?>",
+            "`", ";--", "|cat", "|ls", "|dir", "&cat", "&ls", "&dir"
         ]
         
         all_patterns = sql_patterns + xss_patterns + path_patterns + command_patterns

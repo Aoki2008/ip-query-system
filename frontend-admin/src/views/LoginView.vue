@@ -5,6 +5,9 @@
         <h2>IP查询工具 - 管理后台</h2>
         <p>请使用管理员账户登录</p>
       </div>
+
+      <!-- 服务状态检查 -->
+      <ServiceStatus />
       
       <el-form
         ref="loginFormRef"
@@ -61,6 +64,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
+import ServiceStatus from '@/components/ServiceStatus.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

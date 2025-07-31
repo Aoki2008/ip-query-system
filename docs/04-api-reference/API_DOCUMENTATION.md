@@ -43,18 +43,14 @@ curl -X GET "http://localhost:8000/health"
 
 ### 2. 单个IP查询
 
-**接口**: `GET /api/query/{ip}`  
-**描述**: 查询单个IP地址的详细信息  
-**认证**: 无需认证  
-
-#### 路径参数
-| 参数 | 类型 | 必需 | 描述 |
-|------|------|------|------|
-| ip | string | 是 | 要查询的IP地址 |
+**接口**: `GET /api/query`
+**描述**: 查询单个IP地址的详细信息
+**认证**: 无需认证
 
 #### 查询参数
 | 参数 | 类型 | 必需 | 默认值 | 描述 |
 |------|------|------|-------|------|
+| ip | string | 是 | - | 要查询的IP地址 |
 | db_type | string | 否 | auto | 数据库类型 (auto/city/country/asn) |
 | lang | string | 否 | zh-CN | 语言 (zh-CN/en/ja) |
 | format | string | 否 | json | 响应格式 (json/xml/csv) |
@@ -62,13 +58,13 @@ curl -X GET "http://localhost:8000/health"
 #### 请求示例
 ```bash
 # 基础查询
-curl -X GET "http://localhost:8000/api/query/8.8.8.8"
+curl -X GET "http://localhost:8000/api/query?ip=8.8.8.8"
 
 # 指定数据库类型和语言
-curl -X GET "http://localhost:8000/api/query/8.8.8.8?db_type=city&lang=en"
+curl -X GET "http://localhost:8000/api/query?ip=8.8.8.8&db_type=city&lang=en"
 
 # XML格式响应
-curl -X GET "http://localhost:8000/api/query/8.8.8.8?format=xml"
+curl -X GET "http://localhost:8000/api/query?ip=8.8.8.8&format=xml"
 ```
 
 #### 响应示例
@@ -484,9 +480,9 @@ curl -X POST "http://localhost:8000/admin/database/update" \
 // 单个IP查询
 async function queryIP(ip) {
   try {
-    const response = await fetch(`http://localhost:8000/api/query/${ip}`);
+    const response = await fetch(`http://localhost:8000/api/query?ip=${ip}`);
     const data = await response.json();
-    
+
     if (data.success) {
       console.log('查询结果:', data.data);
       return data.data;
@@ -501,7 +497,7 @@ async function queryIP(ip) {
 // 批量查询
 async function batchQuery(ips) {
   try {
-    const response = await fetch('http://localhost:8000/api/query/batch', {
+    const response = await fetch('http://localhost:8000/api/batch-query', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -512,7 +508,7 @@ async function batchQuery(ips) {
         lang: 'zh-CN'
       })
     });
-    
+
     const data = await response.json();
     return data.results;
   } catch (error) {
@@ -538,9 +534,9 @@ class IPQueryClient:
     
     def query_ip(self, ip, db_type="auto", lang="zh-CN"):
         """查询单个IP"""
-        url = f"{self.base_url}/api/query/{ip}"
-        params = {"db_type": db_type, "lang": lang}
-        
+        url = f"{self.base_url}/api/query"
+        params = {"ip": ip, "db_type": db_type, "lang": lang}
+
         try:
             response = self.session.get(url, params=params)
             response.raise_for_status()
@@ -548,10 +544,10 @@ class IPQueryClient:
         except requests.RequestException as e:
             print(f"查询失败: {e}")
             return None
-    
+
     def batch_query(self, ips, db_type="city", lang="zh-CN"):
         """批量查询IP"""
-        url = f"{self.base_url}/api/query/batch"
+        url = f"{self.base_url}/api/batch-query"
         data = {
             "ips": ips,
             "db_type": db_type,

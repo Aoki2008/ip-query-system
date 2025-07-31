@@ -54,8 +54,8 @@ python main.py
 
 ### IP查询
 
-- `GET /api/query-ip?ip={ip}` - 单个IP查询
-- `POST /api/query-batch` - 批量IP查询
+- `GET /api/query?ip={ip}` - 单个IP查询
+- `POST /api/batch-query` - 批量IP查询
 
 ### 统计信息
 
