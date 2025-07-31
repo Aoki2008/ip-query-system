@@ -153,7 +153,6 @@ const singleIp = ref('')
 const batchIps = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
-const currentIp = ref<any>(null)
 const queryResults = ref<any[]>([])
 
 // 示例IP地址
@@ -161,7 +160,7 @@ const exampleIps = ['8.8.8.8', '114.114.114.114', '1.1.1.1', '208.67.222.222']
 
 // 格式化结果用于BatchResultsTable
 const formattedResults = computed(() => {
-  return queryResults.value.map((result, index) => ({
+  return queryResults.value.map((result) => ({
     ip: result.ip,
     country: result.location?.country || '',
     city: result.location?.city || '',
@@ -184,9 +183,6 @@ const querySingleIp = async () => {
   try {
     const result = await ipService.queryIp(singleIp.value.trim())
     queryResults.value = [result]
-    console.log('查询结果:', result)
-    console.log('格式化位置:', formatLocation(result))
-    console.log('格式化ISP:', formatISP(result))
   } catch (error) {
     console.error('查询失败:', error)
     // 显示错误提示给用户
@@ -213,7 +209,6 @@ const queryBatchIps = async () => {
   try {
     const results = await ipService.queryBatch(ips)
     queryResults.value = results
-    console.log('批量查询结果:', results)
   } catch (error) {
     console.error('批量查询失败:', error)
     errorMessage.value = (error as Error).message || '批量查询失败，请检查网络连接或稍后重试'
@@ -246,7 +241,6 @@ const importFile = () => {
 
         batchIps.value = ips.join('\n')
         errorMessage.value = ''
-        console.log(`成功导入${ips.length}个IP地址`)
       } catch (error) {
         console.error('文件导入失败:', error)
         errorMessage.value = '文件导入失败，请检查文件格式'
@@ -254,17 +248,6 @@ const importFile = () => {
     }
   }
   input.click()
-}
-
-// 导出结果
-const exportResults = () => {
-  // TODO: 实现结果导出功能
-  console.log('导出结果功能待实现')
-}
-
-// 清空结果
-const clearResults = () => {
-  queryResults.value = []
 }
 
 // 处理导出
@@ -332,74 +315,10 @@ const downloadFile = (content: string, filename: string, mimeType: string) => {
 // const getCurrentIp = async () => {
 //   try {
 //     // 暂时注释掉，避免启动时的网络请求错误
-//     console.log('获取当前IP功能待实现')
 //   } catch (error) {
 //     console.error('获取当前IP失败:', error)
 //   }
 // }
-
-// 格式化地理位置信息
-const formatLocation = (result: any) => {
-  const parts = []
-
-  // 检查location对象是否存在
-  if (result.location && typeof result.location === 'object') {
-    const location = result.location
-
-    if (location.country && location.country !== 'null' && location.country !== null) {
-      parts.push(location.country)
-    }
-    if (location.region && location.region !== 'null' && location.region !== null) {
-      parts.push(location.region)
-    }
-    if (location.city && location.city !== 'null' && location.city !== null) {
-      parts.push(location.city)
-    }
-  }
-
-  return parts.length > 0 ? parts.join(', ') : '未知位置'
-}
-
-// 格式化ISP信息
-const formatISP = (result: any) => {
-  // 检查ISP对象的各个字段
-  if (result.isp && typeof result.isp === 'object') {
-    const isp = result.isp
-    const ispParts = []
-
-    // 优先显示ISP名称
-    if (isp.isp && isp.isp !== 'null' && isp.isp !== null) {
-      ispParts.push(`ISP: ${isp.isp}`)
-    }
-
-    // 其次显示组织名称
-    if (isp.organization && isp.organization !== 'null' && isp.organization !== null) {
-      ispParts.push(`组织: ${isp.organization}`)
-    }
-
-    // 再次显示ASN组织
-    if (isp.asn_organization && isp.asn_organization !== 'null' && isp.asn_organization !== null) {
-      ispParts.push(`ASN组织: ${isp.asn_organization}`)
-    }
-
-    // 最后显示ASN号码
-    if (isp.asn && isp.asn !== 'null' && isp.asn !== null) {
-      ispParts.push(`ASN: ${isp.asn}`)
-    }
-
-    // 如果有任何ISP信息，返回组合结果
-    if (ispParts.length > 0) {
-      return ispParts.join(' | ')
-    }
-  }
-
-  // 如果ISP是字符串
-  if (typeof result.isp === 'string' && result.isp && result.isp !== 'null') {
-    return result.isp
-  }
-
-  return '未知ISP'
-}
 
 onMounted(() => {
   // getCurrentIp() // 暂时注释掉

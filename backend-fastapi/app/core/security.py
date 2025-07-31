@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT配置
-SECRET_KEY = getattr(settings, 'secret_key', secrets.token_urlsafe(32))
+SECRET_KEY = getattr(settings, 'secret_key', "dev-core-secret-key-change-in-production-" + "x" * 32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7

@@ -75,9 +75,7 @@ export const ipService = {
   // 连接测试
   async testConnection(): Promise<boolean> {
     try {
-      console.log('测试后端连接...')
-      const response = await apiClient.get<HealthResponse>('/health')
-      console.log('连接测试成功:', response.data)
+      await apiClient.get<HealthResponse>('/health')
       return true
     } catch (error) {
       console.error('连接测试失败:', error)

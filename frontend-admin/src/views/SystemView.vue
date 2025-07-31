@@ -41,14 +41,14 @@
             </div>
             <div class="info-item">
               <span class="label">数据库状态：</span>
-              <el-tag :type="getDatabaseStatusType()">
-                {{ getDatabaseStatusText() }}
+              <el-tag :type="databaseStatusType">
+                {{ databaseStatusText }}
               </el-tag>
             </div>
             <div class="info-item">
               <span class="label">选择模式：</span>
-              <el-tag :type="getSelectionModeType()">
-                {{ getSelectionModeText() }}
+              <el-tag :type="selectionModeType">
+                {{ selectionModeText }}
               </el-tag>
             </div>
           </div>
@@ -526,28 +526,28 @@ const canSwitchDatabase = computed(() => {
   return (switchChanges || dbChanges) && hasAtLeastOneEnabled && enabledDbsHaveSelection
 })
 
-// 计算数据库状态类型
-const getDatabaseStatusType = () => {
+// 计算数据库状态类型（优化：使用computed）
+const databaseStatusType = computed(() => {
   const { city_db, asn_db, country_db } = databaseInfo.value.database_status || {}
   const loadedCount = [city_db, asn_db, country_db].filter(Boolean).length
 
   if (loadedCount === 3) return 'success'
   if (loadedCount === 0) return 'danger'
   return 'warning'
-}
+})
 
-// 计算数据库状态文本
-const getDatabaseStatusText = () => {
+// 计算数据库状态文本（优化：使用computed）
+const databaseStatusText = computed(() => {
   const { city_db, asn_db, country_db } = databaseInfo.value.database_status || {}
   const loadedCount = [city_db, asn_db, country_db].filter(Boolean).length
 
   if (loadedCount === 3) return '全部已加载'
   if (loadedCount === 0) return '未加载'
   return `部分已加载 (${loadedCount}/3)`
-}
+})
 
-// 计算选择模式类型
-const getSelectionModeType = () => {
+// 计算选择模式类型（优化：使用computed）
+const selectionModeType = computed(() => {
   const { city_db, asn_db, country_db } = databaseInfo.value.current_databases || {}
   const activeCount = [city_db, asn_db, country_db].filter(db => db && db !== '').length
 
@@ -555,10 +555,10 @@ const getSelectionModeType = () => {
   if (activeCount === 1) return 'primary'
   if (activeCount === 2) return 'warning'
   return 'info'
-}
+})
 
-// 计算选择模式文本
-const getSelectionModeText = () => {
+// 计算选择模式文本（优化：使用computed）
+const selectionModeText = computed(() => {
   const { city_db, asn_db, country_db } = databaseInfo.value.current_databases || {}
   const activeDbs = []
 
@@ -570,12 +570,10 @@ const getSelectionModeText = () => {
   if (activeDbs.length === 1) return `仅${activeDbs[0]}数据库`
   if (activeDbs.length === 2) return `${activeDbs.join('+')}数据库`
   return '全数据库模式'
-}
+})
 
 // 数据库开关变化处理
 const onDatabaseSwitchChange = (dbType, enabled) => {
-  console.log(`🔄 数据库开关变化: ${dbType} -> ${enabled}`)
-
   if (!enabled) {
     // 关闭数据库时，清空对应的选择
     if (dbType === 'city') {
@@ -627,7 +625,6 @@ const saveDatabaseSwitchesToStorage = () => {
     timestamp: Date.now()
   }
   localStorage.setItem('database_switches_state', JSON.stringify(switchState))
-  console.log('💾 保存数据库开关状态到本地存储:', switchState)
 }
 
 // 从本地存储恢复开关状态
@@ -640,7 +637,6 @@ const loadDatabaseSwitchesFromStorage = () => {
       const isRecent = switchState.timestamp && (Date.now() - switchState.timestamp < 24 * 60 * 60 * 1000)
 
       if (isRecent) {
-        console.log('📥 从本地存储恢复数据库开关状态:', switchState)
         return {
           cityEnabled: switchState.cityEnabled,
           asnEnabled: switchState.asnEnabled,
@@ -666,13 +662,11 @@ const initializeDatabaseSwitches = () => {
     databaseSwitches.value.cityEnabled = storedSwitches.cityEnabled
     databaseSwitches.value.asnEnabled = storedSwitches.asnEnabled
     databaseSwitches.value.countryEnabled = storedSwitches.countryEnabled
-    console.log('🔄 使用存储的数据库开关状态:', databaseSwitches.value)
   } else {
     // 根据当前数据库状态初始化（首次访问或无存储状态）
     databaseSwitches.value.cityEnabled = !!(city_db && city_db !== '')
     databaseSwitches.value.asnEnabled = !!(asn_db && asn_db !== '')
     databaseSwitches.value.countryEnabled = !!(country_db && country_db !== '')
-    console.log('🔄 根据当前数据库状态初始化开关:', databaseSwitches.value)
   }
 
   // 确保至少有一个开关启用
@@ -680,7 +674,6 @@ const initializeDatabaseSwitches = () => {
   if (enabledCount === 0) {
     // 如果所有开关都关闭，默认启用城市数据库
     databaseSwitches.value.cityEnabled = true
-    console.log('⚠️ 所有开关都关闭，默认启用城市数据库')
   }
 }
 
@@ -725,10 +718,8 @@ const getStatusTagType = (status: string) => {
 
 const fetchDetailedDatabaseInfo = async () => {
   try {
-    console.log('🔍 获取详细数据库文件信息...')
     const response = await api.get('/admin/system/database/files/detailed')
     detailedDatabaseInfo.value = response.data
-    console.log('✅ 详细数据库文件信息获取成功:', response.data)
   } catch (error) {
     console.error('❌ 获取详细数据库文件信息失败:', error)
     ElMessage.error('获取详细数据库文件信息失败')
@@ -738,9 +729,7 @@ const fetchDetailedDatabaseInfo = async () => {
 const refreshDatabaseInfo = async () => {
   loading.value = true
   try {
-    console.log('🔍 开始获取数据库信息...')
     const response = await api.get('/admin/system/database/info')
-    console.log('✅ 数据库信息获取成功:', response.data)
     databaseInfo.value = response.data
 
     // 根据当前数据库状态初始化开关
@@ -750,10 +739,6 @@ const refreshDatabaseInfo = async () => {
     await fetchDetailedDatabaseInfo()
   } catch (error) {
     console.error('❌ 获取数据库信息失败:', error)
-    console.error('错误详情:', {
-      message: error.message,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
       data: error.response?.data,
       config: {
         url: error.config?.url,
@@ -785,9 +770,7 @@ const refreshDatabaseInfo = async () => {
 const refreshStats = async () => {
   refreshingStats.value = true
   try {
-    console.log('📊 开始获取系统统计...')
     const response = await api.get('/admin/system/stats')
-    console.log('✅ 系统统计获取成功:', response.data)
     systemStats.value = response.data.geoip_stats
   } catch (error) {
     console.error('❌ 获取系统统计失败:', error)
@@ -837,39 +820,42 @@ const switchDatabase = async () => {
 
     const requestData = {}
 
-    // 根据开关状态和选择构建请求数据
-    if (databaseSwitches.value.cityEnabled) {
-      if (switchForm.value.cityDb !== undefined && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) {
-        requestData.city_db_key = switchForm.value.cityDb || null
+    // 根据开关状态和选择构建请求数据（优化：使用配置驱动的方式）
+    const dbConfigs = [
+      {
+        enabled: databaseSwitches.value.cityEnabled,
+        newValue: switchForm.value.cityDb,
+        currentValue: databaseInfo.value.current_databases?.city_db,
+        key: 'city_db_key'
+      },
+      {
+        enabled: databaseSwitches.value.asnEnabled,
+        newValue: switchForm.value.asnDb,
+        currentValue: databaseInfo.value.current_databases?.asn_db,
+        key: 'asn_db_key'
+      },
+      {
+        enabled: databaseSwitches.value.countryEnabled,
+        newValue: switchForm.value.countryDb,
+        currentValue: databaseInfo.value.current_databases?.country_db,
+        key: 'country_db_key'
       }
-    } else {
-      // 开关关闭，设置为null表示不使用
-      if (databaseInfo.value.current_databases?.city_db) {
-        requestData.city_db_key = null
-      }
-    }
+    ]
 
-    if (databaseSwitches.value.asnEnabled) {
-      if (switchForm.value.asnDb !== undefined && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) {
-        requestData.asn_db_key = switchForm.value.asnDb || null
+    dbConfigs.forEach(config => {
+      if (config.enabled) {
+        if (config.newValue !== undefined && config.newValue !== config.currentValue) {
+          requestData[config.key] = config.newValue || null
+        }
+      } else {
+        // 开关关闭，设置为null表示不使用
+        if (config.currentValue) {
+          requestData[config.key] = null
+        }
       }
-    } else {
-      // 开关关闭，设置为null表示不使用
-      if (databaseInfo.value.current_databases?.asn_db) {
-        requestData.asn_db_key = null
-      }
-    }
+    })
 
-    if (databaseSwitches.value.countryEnabled) {
-      if (switchForm.value.countryDb !== undefined && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db) {
-        requestData.country_db_key = switchForm.value.countryDb || null
-      }
-    } else {
-      // 开关关闭，设置为null表示不使用
-      if (databaseInfo.value.current_databases?.country_db) {
-        requestData.country_db_key = null
-      }
-    }
+
 
     const response = await api.post('/admin/system/database/switch', requestData)
 

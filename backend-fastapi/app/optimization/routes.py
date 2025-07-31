@@ -92,7 +92,7 @@ async def get_performance_metrics(
 ):
     """获取性能指标"""
     metrics = performance_optimizer.monitor.get_current_metrics()
-    return metrics.dict()
+    return metrics.model_dump()
 
 
 @router.get("/performance/summary")

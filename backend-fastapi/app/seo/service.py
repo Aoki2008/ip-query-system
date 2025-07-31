@@ -30,7 +30,7 @@ class SeoService:
             existing_config = self.get_seo_config()
             if existing_config:
                 # 如果已存在，则更新
-                return self.update_seo_config(SeoConfigUpdate(**config.dict()))
+                return self.update_seo_config(SeoConfigUpdate(**config.model_dump()))
             
             db_config = SeoConfig(
                 title=config.title,

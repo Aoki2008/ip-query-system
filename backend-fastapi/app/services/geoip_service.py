@@ -43,7 +43,15 @@ class AsyncGeoIPService:
             "current_country_db": "",
             "available_databases": []
         }
-    
+
+    def _close_readers(self, readers: List[geoip2.database.Reader]) -> None:
+        """批量关闭数据库读取器（同步方法，在线程池中执行）"""
+        for reader in readers:
+            try:
+                reader.close()
+            except Exception as e:
+                logger.warning(f"关闭数据库读取器时出错: {e}")
+
     async def initialize(self) -> None:
         """初始化GeoIP服务"""
         try:
@@ -207,24 +215,23 @@ class AsyncGeoIPService:
     async def _initialize_readers(self) -> None:
         """根据当前数据源初始化读取器"""
         try:
-            # 关闭现有读取器
+            # 关闭现有读取器（优化：批量关闭以减少事件循环调用）
+            readers_to_close = []
             if self.db_reader:
-                await asyncio.get_event_loop().run_in_executor(
-                    self.executor, self.db_reader.close
-                )
+                readers_to_close.append(self.db_reader)
                 self.db_reader = None
-
             if self.asn_reader:
-                await asyncio.get_event_loop().run_in_executor(
-                    self.executor, self.asn_reader.close
-                )
+                readers_to_close.append(self.asn_reader)
                 self.asn_reader = None
-
             if self.country_reader:
-                await asyncio.get_event_loop().run_in_executor(
-                    self.executor, self.country_reader.close
-                )
+                readers_to_close.append(self.country_reader)
                 self.country_reader = None
+
+            # 批量关闭读取器
+            if readers_to_close:
+                await asyncio.get_event_loop().run_in_executor(
+                    self.executor, self._close_readers, readers_to_close
+                )
 
             # 根据选择的数据库文件获取路径
             city_db_path = None
@@ -403,8 +410,8 @@ class AsyncGeoIPService:
             
         except geoip2.errors.AddressNotFoundError:
             return {
-                "location": LocationInfo().dict(),
-                "isp": ISPInfo().dict(),
+                "location": LocationInfo().model_dump(),
+                "isp": ISPInfo().model_dump(),
                 "success": False,
                 "error": "IP地址未找到地理位置信息"
             }

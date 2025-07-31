@@ -148,13 +148,16 @@ async def query_batch_ips(
         
         logger.info(f"验证通过，共{len(valid_ips)}个有效IP，开始批量查询")
         
-        # 先尝试从缓存获取结果
+        # 先尝试从缓存获取结果（优化：并发检查缓存）
+        import asyncio
+        cache_tasks = [cache_service.get_cached_result(ip) for ip in valid_ips]
+        cache_results = await asyncio.gather(*cache_tasks, return_exceptions=True)
+
         cached_results = []
         uncached_ips = []
-        
-        for ip in valid_ips:
-            cached_result = await cache_service.get_cached_result(ip)
-            if cached_result:
+
+        for ip, cached_result in zip(valid_ips, cache_results):
+            if cached_result and not isinstance(cached_result, Exception):
                 cached_results.append(cached_result)
             else:
                 uncached_ips.append(ip)
@@ -192,7 +195,7 @@ async def query_batch_ips(
                 "total": len(valid_ips),
                 "success_count": success_count,
                 "cached_count": len(cached_results),
-                "results": [result.dict() for result in all_results],
+                "results": [result.model_dump() for result in all_results],
                 "query_type": "fastapi_async"
             }
         )

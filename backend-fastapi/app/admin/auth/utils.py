@@ -15,7 +15,11 @@ from ...core.password_validator import PasswordValidator
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT配置
-SECRET_KEY = os.getenv("ADMIN_SECRET_KEY", secrets.token_urlsafe(32))
+SECRET_KEY = os.getenv("ADMIN_SECRET_KEY")
+if not SECRET_KEY:
+    # 如果没有设置环境变量，使用固定的开发密钥（仅用于开发环境）
+    SECRET_KEY = "dev-secret-key-change-in-production-" + "x" * 32
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 REFRESH_TOKEN_EXPIRE_DAYS = 7

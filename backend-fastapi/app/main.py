@@ -5,7 +5,7 @@ FastAPI主应用
 from contextlib import asynccontextmanager
 from typing import Dict, Any
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
@@ -196,7 +196,6 @@ def create_app() -> FastAPI:
     from .admin.data_routes import router as admin_data_router
     app.include_router(admin_analytics_router)
     app.include_router(admin_data_router)
-
 
 
 

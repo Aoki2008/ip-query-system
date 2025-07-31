@@ -144,7 +144,7 @@ class AsyncCacheService:
             for result in results:
                 if not result.error:
                     cache_key = self._get_cache_key(result.ip)
-                    cache_data = result.dict()
+                    cache_data = result.model_dump()
                     cache_data["cached"] = False
                     
                     pipe.setex(

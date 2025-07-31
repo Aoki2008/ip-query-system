@@ -100,7 +100,7 @@ class Settings(BaseSettings):
 
     # 管理后台配置
     admin_secret_key: str = Field(
-        default_factory=lambda: secrets.token_urlsafe(32),
+        default="dev-admin-secret-key-change-in-production-" + "x" * 32,
         description="管理后台JWT密钥"
     )
     admin_access_token_expire_minutes: int = Field(

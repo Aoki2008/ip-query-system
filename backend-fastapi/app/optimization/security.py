@@ -26,7 +26,7 @@ class SecurityConfig(BaseModel):
     password_require_lowercase: bool = True
     password_require_numbers: bool = True
     password_require_symbols: bool = True
-    jwt_secret_key: str = secrets.token_urlsafe(32)
+    jwt_secret_key: str = "dev-jwt-secret-key-change-in-production-" + "x" * 32
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440  # 24小时
     rate_limit_requests: int = 100

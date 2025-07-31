@@ -210,7 +210,7 @@ async def export_analytics_report(
             "report_id": f"analytics_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}",
             "generated_at": datetime.utcnow().isoformat(),
             "time_range": time_range.value,
-            "data": dashboard_data.dict()
+            "data": dashboard_data.model_dump()
         }
     elif format.lower() == "csv":
         # 简化的CSV导出
