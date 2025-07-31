@@ -22,21 +22,21 @@
           <div class="database-info">
             <h4>当前数据库状态</h4>
             <div class="info-item">
-              <span class="label">当前数据源：</span>
-              <el-tag :type="getSourceTagType(databaseInfo.current_source)">
-                {{ getSourceDisplayName(databaseInfo.current_source) }}
-              </el-tag>
-            </div>
-            <div class="info-item">
               <span class="label">城市数据库：</span>
               <el-tag :type="databaseInfo.database_status?.city_db ? 'success' : 'danger'">
-                {{ databaseInfo.database_status?.city_db ? '已加载' : '未加载' }}
+                {{ databaseInfo.current_databases?.city_db || '未设置' }}
               </el-tag>
             </div>
             <div class="info-item">
               <span class="label">ASN数据库：</span>
               <el-tag :type="databaseInfo.database_status?.asn_db ? 'success' : 'danger'">
-                {{ databaseInfo.database_status?.asn_db ? '已加载' : '未加载' }}
+                {{ databaseInfo.current_databases?.asn_db || '未设置' }}
+              </el-tag>
+            </div>
+            <div class="info-item">
+              <span class="label">数据库状态：</span>
+              <el-tag :type="(databaseInfo.database_status?.city_db && databaseInfo.database_status?.asn_db) ? 'success' : 'warning'">
+                {{ (databaseInfo.database_status?.city_db && databaseInfo.database_status?.asn_db) ? '全部已加载' : '部分未加载' }}
               </el-tag>
             </div>
           </div>
@@ -44,33 +44,33 @@
 
         <el-col :span="12">
           <div class="database-switch">
-            <h4>切换数据源</h4>
-            <el-form :model="switchForm" label-width="100px">
-              <el-form-item label="数据源">
+            <h4>切换数据库文件</h4>
+            <el-form :model="switchForm" label-width="120px">
+              <el-form-item label="城市数据库">
                 <el-select
-                  v-model="switchForm.source"
-                  placeholder="选择数据源"
+                  v-model="switchForm.cityDb"
+                  placeholder="选择城市数据库文件"
                   style="width: 100%"
-                  popper-class="database-source-dropdown"
+                  popper-class="database-file-dropdown"
                 >
                   <el-option
-                    v-for="source in databaseInfo.available_sources"
-                    :key="source"
-                    :label="getSourceDisplayName(source)"
-                    :value="source"
-                    :disabled="source === databaseInfo.current_source"
-                    class="source-option"
+                    v-for="(db, key) in detailedDatabaseInfo.city_databases"
+                    :key="key"
+                    :label="db.display_name"
+                    :value="key"
+                    :disabled="key === databaseInfo.current_databases?.city_db"
+                    class="db-option"
                   >
-                    <div class="source-option-content">
-                      <div class="source-header">
-                        <span class="source-name">
-                          <el-icon v-if="source === databaseInfo.current_source" class="current-icon">
+                    <div class="db-option-content">
+                      <div class="db-header">
+                        <span class="db-name">
+                          <el-icon v-if="key === databaseInfo.current_databases?.city_db" class="current-icon">
                             <Check />
                           </el-icon>
-                          {{ getSourceDisplayName(source) }}
+                          {{ db.display_name }}
                         </span>
                         <el-tag
-                          v-if="source === databaseInfo.current_source"
+                          v-if="key === databaseInfo.current_databases?.city_db"
                           type="success"
                           size="small"
                           class="current-tag"
@@ -78,33 +78,71 @@
                           当前使用
                         </el-tag>
                       </div>
-                      <div class="source-details" v-if="detailedSourceInfo.source_details?.[source]">
+                      <div class="db-details">
                         <div class="db-info">
-                          <div class="db-item">
-                            <span class="db-label">城市数据库:</span>
-                            <span class="db-path">{{ detailedSourceInfo.source_details[source].city_db.path }}</span>
-                            <span class="db-size">({{ detailedSourceInfo.source_details[source].city_db.size_mb }}MB)</span>
-                            <el-tag
-                              :type="getStatusTagType(detailedSourceInfo.source_details[source].city_db.status)"
-                              size="small"
-                            >
-                              {{ detailedSourceInfo.source_details[source].city_db.status }}
-                            </el-tag>
-                          </div>
-                          <div class="db-item">
-                            <span class="db-label">ASN数据库:</span>
-                            <span class="db-path">{{ detailedSourceInfo.source_details[source].asn_db.path }}</span>
-                            <span class="db-size">({{ detailedSourceInfo.source_details[source].asn_db.size_mb }}MB)</span>
-                            <el-tag
-                              :type="getStatusTagType(detailedSourceInfo.source_details[source].asn_db.status)"
-                              size="small"
-                            >
-                              {{ detailedSourceInfo.source_details[source].asn_db.status }}
-                            </el-tag>
-                          </div>
+                          <span class="db-path">{{ db.path }}</span>
+                          <span class="db-size">({{ db.size_mb }}MB)</span>
+                          <el-tag
+                            :type="getStatusTagType(db.status)"
+                            size="small"
+                          >
+                            {{ db.status }}
+                          </el-tag>
                         </div>
-                        <div class="source-description">
-                          {{ detailedSourceInfo.source_details[source].description }}
+                        <div class="db-description">
+                          {{ db.source_location }}
+                        </div>
+                      </div>
+                    </div>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+
+              <el-form-item label="ASN数据库">
+                <el-select
+                  v-model="switchForm.asnDb"
+                  placeholder="选择ASN数据库文件"
+                  style="width: 100%"
+                  popper-class="database-file-dropdown"
+                >
+                  <el-option
+                    v-for="(db, key) in detailedDatabaseInfo.asn_databases"
+                    :key="key"
+                    :label="db.display_name"
+                    :value="key"
+                    :disabled="key === databaseInfo.current_databases?.asn_db"
+                    class="db-option"
+                  >
+                    <div class="db-option-content">
+                      <div class="db-header">
+                        <span class="db-name">
+                          <el-icon v-if="key === databaseInfo.current_databases?.asn_db" class="current-icon">
+                            <Check />
+                          </el-icon>
+                          {{ db.display_name }}
+                        </span>
+                        <el-tag
+                          v-if="key === databaseInfo.current_databases?.asn_db"
+                          type="success"
+                          size="small"
+                          class="current-tag"
+                        >
+                          当前使用
+                        </el-tag>
+                      </div>
+                      <div class="db-details">
+                        <div class="db-info">
+                          <span class="db-path">{{ db.path }}</span>
+                          <span class="db-size">({{ db.size_mb }}MB)</span>
+                          <el-tag
+                            :type="getStatusTagType(db.status)"
+                            size="small"
+                          >
+                            {{ db.status }}
+                          </el-tag>
+                        </div>
+                        <div class="db-description">
+                          {{ db.source_location }}
                         </div>
                       </div>
                     </div>
@@ -117,17 +155,16 @@
                   type="primary"
                   @click="switchDatabase"
                   :loading="switching"
-                  :disabled="!switchForm.source || switchForm.source === databaseInfo.current_source"
+                  :disabled="!canSwitchDatabase"
                 >
-                  切换数据源
+                  切换数据库
                 </el-button>
                 <el-button
                   type="success"
                   @click="testDatabase"
                   :loading="testing"
-                  :disabled="!switchForm.source"
                 >
-                  测试数据源
+                  测试当前配置
                 </el-button>
               </el-form-item>
             </el-form>
@@ -273,18 +310,29 @@ const rescanning = ref(false)
 const refreshingStats = ref(false)
 
 const databaseInfo = ref({
-  current_source: '',
-  available_sources: [],
+  current_databases: {
+    city_db: '',
+    asn_db: ''
+  },
   available_databases: {},
   database_status: {
     city_db: false,
     asn_db: false
+  },
+  database_files: {
+    city_databases: [],
+    asn_databases: []
   }
 })
 
-const detailedSourceInfo = ref({
-  current_source: '',
-  source_details: {}
+const detailedDatabaseInfo = ref({
+  current_databases: {
+    city_db: '',
+    asn_db: ''
+  },
+  database_details: {},
+  city_databases: {},
+  asn_databases: {}
 })
 
 const systemStats = ref({
@@ -296,7 +344,8 @@ const systemStats = ref({
 })
 
 const switchForm = ref({
-  source: ''
+  cityDb: '',
+  asnDb: ''
 })
 
 // 计算属性
@@ -323,6 +372,15 @@ const databaseTableData = computed(() => {
   }
 
   return data
+})
+
+// 计算是否可以切换数据库
+const canSwitchDatabase = computed(() => {
+  const hasChanges = (
+    (switchForm.value.cityDb && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) ||
+    (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db)
+  )
+  return hasChanges
 })
 
 // 方法
@@ -364,15 +422,15 @@ const getStatusTagType = (status: string) => {
   return types[status] || 'info'
 }
 
-const fetchDetailedSourceInfo = async () => {
+const fetchDetailedDatabaseInfo = async () => {
   try {
-    console.log('🔍 获取详细数据源信息...')
-    const response = await api.get('/admin/system/database/sources/detailed')
-    detailedSourceInfo.value = response.data
-    console.log('✅ 详细数据源信息获取成功:', response.data)
+    console.log('🔍 获取详细数据库文件信息...')
+    const response = await api.get('/admin/system/database/files/detailed')
+    detailedDatabaseInfo.value = response.data
+    console.log('✅ 详细数据库文件信息获取成功:', response.data)
   } catch (error) {
-    console.error('❌ 获取详细数据源信息失败:', error)
-    ElMessage.error('获取详细数据源信息失败')
+    console.error('❌ 获取详细数据库文件信息失败:', error)
+    ElMessage.error('获取详细数据库文件信息失败')
   }
 }
 
@@ -384,8 +442,8 @@ const refreshDatabaseInfo = async () => {
     console.log('✅ 数据库信息获取成功:', response.data)
     databaseInfo.value = response.data
 
-    // 同时获取详细数据源信息
-    await fetchDetailedSourceInfo()
+    // 同时获取详细数据库文件信息
+    await fetchDetailedDatabaseInfo()
   } catch (error) {
     console.error('❌ 获取数据库信息失败:', error)
     console.error('错误详情:', {
@@ -441,14 +499,24 @@ const refreshStats = async () => {
 }
 
 const switchDatabase = async () => {
-  if (!switchForm.value.source) {
-    ElMessage.warning('请选择要切换的数据源')
+  if (!canSwitchDatabase.value) {
+    ElMessage.warning('请选择要切换的数据库文件')
     return
   }
 
   try {
+    const changes = []
+    if (switchForm.value.cityDb && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) {
+      const dbInfo = detailedDatabaseInfo.value.city_databases[switchForm.value.cityDb]
+      changes.push(`城市数据库: ${dbInfo?.display_name}`)
+    }
+    if (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) {
+      const dbInfo = detailedDatabaseInfo.value.asn_databases[switchForm.value.asnDb]
+      changes.push(`ASN数据库: ${dbInfo?.display_name}`)
+    }
+
     await ElMessageBox.confirm(
-      `确定要切换到 ${getSourceDisplayName(switchForm.value.source)} 吗？`,
+      `确定要切换以下数据库吗？\n${changes.join('\n')}`,
       '确认切换',
       {
         confirmButtonText: '确定',
@@ -459,22 +527,30 @@ const switchDatabase = async () => {
 
     switching.value = true
 
-    const response = await api.post('/admin/system/database/switch', {
-      source: switchForm.value.source
-    })
+    const requestData = {}
+    if (switchForm.value.cityDb && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) {
+      requestData.city_db_key = switchForm.value.cityDb
+    }
+    if (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) {
+      requestData.asn_db_key = switchForm.value.asnDb
+    }
+
+    const response = await api.post('/admin/system/database/switch', requestData)
 
     if (response.data.success) {
       ElMessage.success(response.data.message)
       await refreshDatabaseInfo()
       await refreshStats()
-      switchForm.value.source = ''
+      // 重置表单
+      switchForm.value.cityDb = ''
+      switchForm.value.asnDb = ''
     } else {
       ElMessage.error(response.data.message)
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('切换数据库失败:', error)
-      ElMessage.error('切换数据库失败')
+      console.error('切换数据库文件失败:', error)
+      ElMessage.error('切换数据库文件失败')
     }
   } finally {
     switching.value = false
@@ -482,27 +558,23 @@ const switchDatabase = async () => {
 }
 
 const testDatabase = async () => {
-  if (!switchForm.value.source) {
-    ElMessage.warning('请选择要测试的数据源')
-    return
-  }
-
   testing.value = true
   try {
-    const response = await api.get(`/admin/system/database/test/${switchForm.value.source}`)
+    const response = await api.get('/admin/system/database/test/current')
 
     if (response.data.success) {
       const result = response.data.test_result
+      const currentDbs = response.data.current_databases
       ElMessage.success({
-        message: `测试成功！查询 ${result.ip}，结果：${result.country}，耗时：${(result.query_time * 1000).toFixed(2)}ms`,
+        message: `测试成功！当前配置 (城市: ${currentDbs.city_db}, ASN: ${currentDbs.asn_db})，查询 ${result.ip}，结果：${result.country}，耗时：${(result.query_time * 1000).toFixed(2)}ms`,
         duration: 5000
       })
     } else {
       ElMessage.error(response.data.message)
     }
   } catch (error) {
-    console.error('测试数据库失败:', error)
-    ElMessage.error('测试数据库失败')
+    console.error('测试当前数据库配置失败:', error)
+    ElMessage.error('测试当前数据库配置失败')
   } finally {
     testing.value = false
   }
@@ -667,20 +739,20 @@ onMounted(async () => {
   }
 }
 
-/* 数据源下拉菜单样式 */
-.source-option-content {
+/* 数据库文件下拉菜单样式 */
+.db-option-content {
   width: 100%;
   padding: 8px 0;
 }
 
-.source-header {
+.db-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.source-name {
+.db-name {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -699,29 +771,19 @@ onMounted(async () => {
   padding: 2px 6px;
 }
 
-.source-details {
+.db-details {
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid #f0f0f0;
 }
 
 .db-info {
-  margin-bottom: 8px;
-}
-
-.db-item {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 4px;
   font-size: 12px;
   color: #606266;
-}
-
-.db-label {
-  font-weight: 600;
-  min-width: 70px;
-  color: #303133;
 }
 
 .db-path {
@@ -740,7 +802,7 @@ onMounted(async () => {
   font-size: 11px;
 }
 
-.source-description {
+.db-description {
   font-size: 12px;
   color: #909399;
   font-style: italic;
@@ -749,46 +811,46 @@ onMounted(async () => {
 </style>
 
 <style>
-/* 全局样式 - 数据源下拉菜单 */
-.database-source-dropdown {
+/* 全局样式 - 数据库文件下拉菜单 */
+.database-file-dropdown {
   max-width: 500px;
 }
 
-.database-source-dropdown .el-select-dropdown__item {
+.database-file-dropdown .el-select-dropdown__item {
   height: auto;
   padding: 12px 20px;
   line-height: 1.4;
 }
 
-.database-source-dropdown .el-select-dropdown__item.is-disabled {
+.database-file-dropdown .el-select-dropdown__item.is-disabled {
   background-color: #f5f7fa;
   border-left: 3px solid #67c23a;
 }
 
-.database-source-dropdown .el-select-dropdown__item:hover {
+.database-file-dropdown .el-select-dropdown__item:hover {
   background-color: #f0f9ff;
 }
 
 @media (max-width: 768px) {
-  .database-source-dropdown {
+  .database-file-dropdown {
     max-width: 90vw;
   }
 
-  .database-source-dropdown .el-select-dropdown__item {
+  .database-file-dropdown .el-select-dropdown__item {
     padding: 8px 12px;
   }
 
-  .source-option-content {
+  .db-option-content {
     padding: 6px 0;
   }
 
-  .source-header {
+  .db-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
 
-  .db-item {
+  .db-info {
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;

@@ -16,26 +16,26 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/api/admin/system", tags=["系统管理"])
 
 
-class DatabaseSwitchRequest(BaseModel):
-    """数据库切换请求"""
-    source: str  # local, api, mixed
+class DatabaseFileSwitchRequest(BaseModel):
+    """数据库文件切换请求"""
+    city_db_key: str = None  # 城市数据库文件key
+    asn_db_key: str = None   # ASN数据库文件key
 
 
-class DatabaseSwitchResponse(BaseModel):
-    """数据库切换响应"""
+class DatabaseFileSwitchResponse(BaseModel):
+    """数据库文件切换响应"""
     success: bool
     message: str
-    old_source: str = None
-    new_source: str = None
-    available_databases: Dict[str, str] = None
+    changes: Dict[str, Dict[str, str]] = None
+    current_databases: Dict[str, str] = None
 
 
 class DatabaseInfoResponse(BaseModel):
     """数据库信息响应"""
-    current_source: str
-    available_sources: list
+    current_databases: Dict[str, str]
     available_databases: Dict[str, Any]
     database_status: Dict[str, bool]
+    database_files: Dict[str, list]
 
 
 class SystemStatsResponse(BaseModel):
@@ -61,34 +61,43 @@ async def get_database_info(
         )
 
 
-@router.get("/database/sources/detailed")
-async def get_detailed_source_info(
+@router.get("/database/files/detailed")
+async def get_detailed_database_info(
     current_user: AdminUser = Depends(get_current_active_user)
 ):
-    """获取详细的数据源信息，用于前端下拉菜单显示"""
+    """获取详细的数据库文件信息，用于前端下拉菜单显示"""
     try:
-        info = await geoip_service.get_detailed_source_info()
+        info = await geoip_service.get_detailed_database_info()
         return info
     except Exception as e:
-        logger.error(f"获取详细数据源信息失败: {e}")
+        logger.error(f"获取详细数据库文件信息失败: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"获取详细数据源信息失败: {str(e)}"
+            detail=f"获取详细数据库文件信息失败: {str(e)}"
         )
 
 
-@router.post("/database/switch", response_model=DatabaseSwitchResponse)
-async def switch_database_source(
-    request: DatabaseSwitchRequest,
+@router.post("/database/switch", response_model=DatabaseFileSwitchResponse)
+async def switch_database_files(
+    request: DatabaseFileSwitchRequest,
     current_user: AdminUser = Depends(get_current_active_user)
 ):
-    """切换数据库源"""
+    """切换数据库文件"""
     try:
-        result = await geoip_service.switch_database_source(request.source)
+        result = await geoip_service.switch_database_file(
+            city_db_key=request.city_db_key,
+            asn_db_key=request.asn_db_key
+        )
 
         if result["success"]:
-            logger.info(f"管理员 {current_user.username} 切换数据库源到: {request.source}")
-            return DatabaseSwitchResponse(**result)
+            changes_desc = []
+            if request.city_db_key:
+                changes_desc.append(f"城市数据库: {request.city_db_key}")
+            if request.asn_db_key:
+                changes_desc.append(f"ASN数据库: {request.asn_db_key}")
+
+            logger.info(f"管理员 {current_user.username} 切换数据库文件: {', '.join(changes_desc)}")
+            return DatabaseFileSwitchResponse(**result)
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -101,10 +110,10 @@ async def switch_database_source(
             detail=str(e)
         )
     except Exception as e:
-        logger.error(f"切换数据库源失败: {e}")
+        logger.error(f"切换数据库文件失败: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"切换数据库源失败: {str(e)}"
+            detail=f"切换数据库文件失败: {str(e)}"
         )
 
 
@@ -148,28 +157,22 @@ async def rescan_databases(
         )
 
 
-@router.get("/database/test/{source}")
-async def test_database_source(
-    source: str,
+@router.get("/database/test/current")
+async def test_current_databases(
     current_user: AdminUser = Depends(get_current_active_user)
 ):
-    """测试指定数据库源"""
+    """测试当前数据库配置"""
     try:
-        # 保存当前源
-        original_source = geoip_service.current_source
-        
-        # 临时切换到测试源
-        await geoip_service.switch_database_source(source)
-        
         # 执行测试查询
         test_result = await geoip_service.query_ip("8.8.8.8")
-        
-        # 恢复原始源
-        await geoip_service.switch_database_source(original_source)
-        
+
         return {
             "success": True,
-            "message": f"数据库源 {source} 测试成功",
+            "message": f"当前数据库配置测试成功",
+            "current_databases": {
+                "city_db": geoip_service.current_city_db,
+                "asn_db": geoip_service.current_asn_db
+            },
             "test_result": {
                 "ip": test_result.ip,
                 "country": test_result.location.country,
@@ -177,16 +180,10 @@ async def test_database_source(
                 "query_time": test_result.query_time
             }
         }
-        
+
     except Exception as e:
-        # 确保恢复原始源
-        try:
-            await geoip_service.switch_database_source(original_source)
-        except:
-            pass
-            
-        logger.error(f"测试数据库源失败: {e}")
+        logger.error(f"测试当前数据库配置失败: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"测试数据库源失败: {str(e)}"
+            detail=f"测试当前数据库配置失败: {str(e)}"
         )

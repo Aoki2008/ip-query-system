@@ -26,7 +26,9 @@ class AsyncGeoIPService:
         self.db_reader: Optional[geoip2.database.Reader] = None
         self.asn_reader: Optional[geoip2.database.Reader] = None
         self.executor: Optional[ThreadPoolExecutor] = None
-        self.current_source: str = "local"  # local, api, mixed
+        # 改为独立的数据库文件选择
+        self.current_city_db: str = ""  # 当前使用的城市数据库文件key
+        self.current_asn_db: str = ""   # 当前使用的ASN数据库文件key
         self.available_databases = {}  # 存储可用的数据库信息
         self.stats = {
             "total_queries": 0,
@@ -34,8 +36,9 @@ class AsyncGeoIPService:
             "failed_queries": 0,
             "total_query_time": 0.0,
             "avg_query_time": 0.0,
-            "current_source": "local",
-            "available_sources": []
+            "current_city_db": "",
+            "current_asn_db": "",
+            "available_databases": []
         }
     
     async def initialize(self) -> None:
@@ -50,13 +53,13 @@ class AsyncGeoIPService:
             # 扫描可用的数据库
             await self._scan_available_databases()
 
-            # 设置当前数据源
-            self.current_source = settings.current_geoip_source
+            # 设置默认数据库文件（优先选择本地数据库）
+            await self._set_default_databases()
 
             # 初始化数据库读取器
             await self._initialize_readers()
 
-            logger.info(f"GeoIP服务初始化成功，当前数据源: {self.current_source}")
+            logger.info(f"GeoIP服务初始化成功，城市数据库: {self.current_city_db}, ASN数据库: {self.current_asn_db}")
 
         except Exception as e:
             logger.error(f"GeoIP服务初始化失败: {e}")
@@ -111,65 +114,93 @@ class AsyncGeoIPService:
             return False
 
     async def _scan_available_databases(self) -> None:
-        """扫描可用的数据库"""
+        """扫描可用的数据库文件"""
         self.available_databases = {}
-        available_sources = []
+        available_db_keys = []
 
         # 检查本地数据库
         local_city_path = Path(settings.geoip_db_path)
         local_asn_path = Path(settings.geoip_asn_db_path)
 
         if local_city_path.exists():
-            self.available_databases["local_city"] = {
+            db_key = "local_city"
+            self.available_databases[db_key] = {
+                "key": db_key,
                 "path": str(local_city_path),
                 "type": "city",
-                "source": "local",
+                "source_location": "本地数据目录",
+                "display_name": f"城市数据库 (data目录)",
+                "file_name": local_city_path.name,
                 **self._get_file_info(local_city_path)
             }
-            if "local" not in available_sources:
-                available_sources.append("local")
+            available_db_keys.append(db_key)
 
         if local_asn_path.exists():
-            self.available_databases["local_asn"] = {
+            db_key = "local_asn"
+            self.available_databases[db_key] = {
+                "key": db_key,
                 "path": str(local_asn_path),
                 "type": "asn",
-                "source": "local",
+                "source_location": "项目根目录",
+                "display_name": f"ASN数据库 (根目录)",
+                "file_name": local_asn_path.name,
                 **self._get_file_info(local_asn_path)
             }
-            if "local" not in available_sources:
-                available_sources.append("local")
+            available_db_keys.append(db_key)
 
         # 检查API目录数据库
         api_city_path = Path("API/GeoLite2-City.mmdb")
         api_asn_path = Path("API/GeoLite2-ASN.mmdb")
 
         if api_city_path.exists():
-            self.available_databases["api_city"] = {
+            db_key = "api_city"
+            self.available_databases[db_key] = {
+                "key": db_key,
                 "path": str(api_city_path),
                 "type": "city",
-                "source": "api",
+                "source_location": "API目录",
+                "display_name": f"城市数据库 (API目录)",
+                "file_name": api_city_path.name,
                 **self._get_file_info(api_city_path)
             }
-            if "api" not in available_sources:
-                available_sources.append("api")
+            available_db_keys.append(db_key)
 
         if api_asn_path.exists():
-            self.available_databases["api_asn"] = {
+            db_key = "api_asn"
+            self.available_databases[db_key] = {
+                "key": db_key,
                 "path": str(api_asn_path),
                 "type": "asn",
-                "source": "api",
+                "source_location": "API目录",
+                "display_name": f"ASN数据库 (API目录)",
+                "file_name": api_asn_path.name,
                 **self._get_file_info(api_asn_path)
             }
-            if "api" not in available_sources:
-                available_sources.append("api")
+            available_db_keys.append(db_key)
 
-        # 如果两个源都可用，添加混合模式
-        if "local" in available_sources and "api" in available_sources:
-            available_sources.append("mixed")
+        self.stats["available_databases"] = available_db_keys
+        logger.info(f"发现可用数据库文件: {len(self.available_databases)} 个")
+        logger.info(f"可用数据库: {available_db_keys}")
 
-        self.stats["available_sources"] = available_sources
-        logger.info(f"发现可用数据库: {len(self.available_databases)} 个")
-        logger.info(f"可用数据源: {available_sources}")
+    async def _set_default_databases(self) -> None:
+        """设置默认数据库文件（优先选择本地数据库）"""
+        # 为城市数据库选择默认值
+        city_dbs = [key for key, db in self.available_databases.items() if db["type"] == "city"]
+        if city_dbs:
+            # 优先选择本地城市数据库
+            self.current_city_db = next((key for key in city_dbs if key.startswith("local_")), city_dbs[0])
+
+        # 为ASN数据库选择默认值
+        asn_dbs = [key for key, db in self.available_databases.items() if db["type"] == "asn"]
+        if asn_dbs:
+            # 优先选择本地ASN数据库
+            self.current_asn_db = next((key for key in asn_dbs if key.startswith("local_")), asn_dbs[0])
+
+        # 更新统计信息
+        self.stats["current_city_db"] = self.current_city_db
+        self.stats["current_asn_db"] = self.current_asn_db
+
+        logger.info(f"默认数据库设置 - 城市: {self.current_city_db}, ASN: {self.current_asn_db}")
 
     async def _initialize_readers(self) -> None:
         """根据当前数据源初始化读取器"""
@@ -187,54 +218,51 @@ class AsyncGeoIPService:
                 )
                 self.asn_reader = None
 
-            # 根据数据源选择数据库
+            # 根据选择的数据库文件获取路径
             city_db_path = None
             asn_db_path = None
 
-            if self.current_source == "local":
-                city_db_info = self.available_databases.get("local_city")
-                asn_db_info = self.available_databases.get("local_asn")
-                city_db_path = city_db_info["path"] if city_db_info else None
-                asn_db_path = asn_db_info["path"] if asn_db_info else None
-            elif self.current_source == "api":
-                city_db_info = self.available_databases.get("api_city")
-                asn_db_info = self.available_databases.get("api_asn")
-                city_db_path = city_db_info["path"] if city_db_info else None
-                asn_db_path = asn_db_info["path"] if asn_db_info else None
-            elif self.current_source == "mixed":
-                # 混合模式：优先使用本地，回退到API
-                local_city = self.available_databases.get("local_city")
-                api_city = self.available_databases.get("api_city")
-                local_asn = self.available_databases.get("local_asn")
-                api_asn = self.available_databases.get("api_asn")
+            # 获取城市数据库路径
+            if self.current_city_db and self.current_city_db in self.available_databases:
+                city_db_info = self.available_databases[self.current_city_db]
+                city_db_path = city_db_info["path"]
 
-                city_db_path = (local_city["path"] if local_city else None) or (api_city["path"] if api_city else None)
-                asn_db_path = (local_asn["path"] if local_asn else None) or (api_asn["path"] if api_asn else None)
+            # 获取ASN数据库路径
+            if self.current_asn_db and self.current_asn_db in self.available_databases:
+                asn_db_info = self.available_databases[self.current_asn_db]
+                asn_db_path = asn_db_info["path"]
 
             # 初始化城市数据库
-            if city_db_path:
+            if city_db_path and Path(city_db_path).exists():
                 self.db_reader = await asyncio.get_event_loop().run_in_executor(
                     self.executor,
                     geoip2.database.Reader,
                     city_db_path
                 )
-                logger.info(f"城市数据库初始化成功: {city_db_path}")
+                # 标记数据库为已加载状态
+                if self.current_city_db in self.available_databases:
+                    self.available_databases[self.current_city_db]["status"] = "已加载"
+                logger.info(f"城市数据库初始化成功: {city_db_path} ({self.current_city_db})")
             else:
-                logger.warning("未找到可用的城市数据库")
+                logger.warning(f"未找到可用的城市数据库: {self.current_city_db}")
 
             # 初始化ASN数据库
-            if asn_db_path:
+            if asn_db_path and Path(asn_db_path).exists():
                 self.asn_reader = await asyncio.get_event_loop().run_in_executor(
                     self.executor,
                     geoip2.database.Reader,
                     asn_db_path
                 )
-                logger.info(f"ASN数据库初始化成功: {asn_db_path}")
+                # 标记数据库为已加载状态
+                if self.current_asn_db in self.available_databases:
+                    self.available_databases[self.current_asn_db]["status"] = "已加载"
+                logger.info(f"ASN数据库初始化成功: {asn_db_path} ({self.current_asn_db})")
             else:
-                logger.warning("未找到可用的ASN数据库")
+                logger.warning(f"未找到可用的ASN数据库: {self.current_asn_db}")
 
             # 更新统计信息
-            self.stats["current_source"] = self.current_source
+            self.stats["current_city_db"] = self.current_city_db
+            self.stats["current_asn_db"] = self.current_asn_db
 
         except Exception as e:
             logger.error(f"初始化数据库读取器失败: {e}")
@@ -497,124 +525,114 @@ class AsyncGeoIPService:
                 self.stats["total_query_time"] / self.stats["total_queries"]
             )
     
-    async def switch_database_source(self, source: str) -> Dict[str, Any]:
-        """切换数据库源"""
+    async def switch_database_file(self, city_db_key: str = None, asn_db_key: str = None) -> Dict[str, Any]:
+        """切换数据库文件"""
         try:
-            if source not in self.stats["available_sources"]:
-                raise ValueError(f"不支持的数据源: {source}")
+            old_city_db = self.current_city_db
+            old_asn_db = self.current_asn_db
 
-            old_source = self.current_source
-            self.current_source = source
+            # 验证并设置城市数据库
+            if city_db_key is not None:
+                if city_db_key not in self.available_databases:
+                    raise ValueError(f"不支持的城市数据库: {city_db_key}")
+                if self.available_databases[city_db_key]["type"] != "city":
+                    raise ValueError(f"数据库类型错误: {city_db_key} 不是城市数据库")
+                self.current_city_db = city_db_key
+
+            # 验证并设置ASN数据库
+            if asn_db_key is not None:
+                if asn_db_key not in self.available_databases:
+                    raise ValueError(f"不支持的ASN数据库: {asn_db_key}")
+                if self.available_databases[asn_db_key]["type"] != "asn":
+                    raise ValueError(f"数据库类型错误: {asn_db_key} 不是ASN数据库")
+                self.current_asn_db = asn_db_key
 
             # 重新初始化读取器
             await self._initialize_readers()
 
-            logger.info(f"数据库源已从 {old_source} 切换到 {source}")
+            changes = []
+            if city_db_key is not None:
+                changes.append(f"城市数据库: {old_city_db} → {self.current_city_db}")
+            if asn_db_key is not None:
+                changes.append(f"ASN数据库: {old_asn_db} → {self.current_asn_db}")
+
+            logger.info(f"数据库文件已切换: {', '.join(changes)}")
 
             return {
                 "success": True,
-                "message": f"数据库源已切换到: {source}",
-                "old_source": old_source,
-                "new_source": source,
-                "available_databases": self.available_databases
+                "message": f"数据库文件已切换: {', '.join(changes)}",
+                "changes": {
+                    "city_db": {"old": old_city_db, "new": self.current_city_db},
+                    "asn_db": {"old": old_asn_db, "new": self.current_asn_db}
+                },
+                "current_databases": {
+                    "city_db": self.current_city_db,
+                    "asn_db": self.current_asn_db
+                }
             }
 
         except Exception as e:
-            logger.error(f"切换数据库源失败: {e}")
+            logger.error(f"切换数据库文件失败: {e}")
             return {
                 "success": False,
-                "message": f"切换数据库源失败: {str(e)}",
-                "current_source": self.current_source
+                "message": f"切换数据库文件失败: {str(e)}",
+                "current_databases": {
+                    "city_db": self.current_city_db,
+                    "asn_db": self.current_asn_db
+                }
             }
 
     async def get_database_info(self) -> Dict[str, Any]:
         """获取数据库信息"""
         return {
-            "current_source": self.current_source,
-            "available_sources": self.stats["available_sources"],
+            "current_databases": {
+                "city_db": self.current_city_db,
+                "asn_db": self.current_asn_db
+            },
             "available_databases": self.available_databases,
             "database_status": {
                 "city_db": self.db_reader is not None,
                 "asn_db": self.asn_reader is not None
+            },
+            "database_files": {
+                "city_databases": [key for key, db in self.available_databases.items() if db["type"] == "city"],
+                "asn_databases": [key for key, db in self.available_databases.items() if db["type"] == "asn"]
             }
         }
 
-    async def get_detailed_source_info(self) -> Dict[str, Any]:
-        """获取详细的数据源信息，用于前端下拉菜单显示"""
-        source_details = {}
+    async def get_detailed_database_info(self) -> Dict[str, Any]:
+        """获取详细的数据库文件信息，用于前端下拉菜单显示"""
+        database_details = {}
 
-        for source in self.stats.get("available_sources", []):
-            if source == "local":
-                city_info = self.available_databases.get("local_city", {})
-                asn_info = self.available_databases.get("local_asn", {})
-                source_details[source] = {
-                    "name": "本地数据库",
-                    "description": "使用项目根目录数据库",
-                    "city_db": {
-                        "path": city_info.get("path", ""),
-                        "size_mb": city_info.get("size_mb", 0),
-                        "modified_time": city_info.get("modified_time", ""),
-                        "status": city_info.get("status", "未知")
-                    },
-                    "asn_db": {
-                        "path": asn_info.get("path", ""),
-                        "size_mb": asn_info.get("size_mb", 0),
-                        "modified_time": asn_info.get("modified_time", ""),
-                        "status": asn_info.get("status", "未知")
-                    },
-                    "is_current": source == self.current_source
-                }
-            elif source == "api":
-                city_info = self.available_databases.get("api_city", {})
-                asn_info = self.available_databases.get("api_asn", {})
-                source_details[source] = {
-                    "name": "API目录数据库",
-                    "description": "使用API目录数据库",
-                    "city_db": {
-                        "path": city_info.get("path", ""),
-                        "size_mb": city_info.get("size_mb", 0),
-                        "modified_time": city_info.get("modified_time", ""),
-                        "status": city_info.get("status", "未知")
-                    },
-                    "asn_db": {
-                        "path": asn_info.get("path", ""),
-                        "size_mb": asn_info.get("size_mb", 0),
-                        "modified_time": asn_info.get("modified_time", ""),
-                        "status": asn_info.get("status", "未知")
-                    },
-                    "is_current": source == self.current_source
-                }
-            elif source == "mixed":
-                # 混合模式显示优先使用的数据库信息
-                local_city = self.available_databases.get("local_city", {})
-                local_asn = self.available_databases.get("local_asn", {})
-                api_city = self.available_databases.get("api_city", {})
-                api_asn = self.available_databases.get("api_asn", {})
-
-                primary_city = local_city if local_city.get("exists") else api_city
-                primary_asn = local_asn if local_asn.get("exists") else api_asn
-
-                source_details[source] = {
-                    "name": "混合模式",
-                    "description": "优先本地，回退API",
-                    "city_db": {
-                        "path": f"{primary_city.get('path', '')} (主)",
-                        "size_mb": primary_city.get("size_mb", 0),
-                        "modified_time": primary_city.get("modified_time", ""),
-                        "status": primary_city.get("status", "未知")
-                    },
-                    "asn_db": {
-                        "path": f"{primary_asn.get('path', '')} (主)",
-                        "size_mb": primary_asn.get("size_mb", 0),
-                        "modified_time": primary_asn.get("modified_time", ""),
-                        "status": primary_asn.get("status", "未知")
-                    },
-                    "is_current": source == self.current_source
-                }
+        # 为每个可用的数据库文件创建详细信息
+        for db_key, db_info in self.available_databases.items():
+            database_details[db_key] = {
+                "key": db_key,
+                "display_name": db_info["display_name"],
+                "file_name": db_info["file_name"],
+                "path": db_info["path"],
+                "type": db_info["type"],
+                "source_location": db_info["source_location"],
+                "size_mb": db_info["size_mb"],
+                "modified_time": db_info["modified_time"],
+                "status": db_info["status"],
+                "is_current": (
+                    (db_info["type"] == "city" and db_key == self.current_city_db) or
+                    (db_info["type"] == "asn" and db_key == self.current_asn_db)
+                )
+            }
+        # 按类型分组数据库
+        city_databases = {k: v for k, v in database_details.items() if v["type"] == "city"}
+        asn_databases = {k: v for k, v in database_details.items() if v["type"] == "asn"}
 
         return {
-            "current_source": self.current_source,
-            "source_details": source_details
+            "current_databases": {
+                "city_db": self.current_city_db,
+                "asn_db": self.current_asn_db
+            },
+            "database_details": database_details,
+            "city_databases": city_databases,
+            "asn_databases": asn_databases
         }
 
     async def get_service_stats(self) -> Dict[str, Any]:
