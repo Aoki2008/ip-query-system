@@ -87,7 +87,7 @@ class AsyncGeoIPService:
                 "size": size_bytes,
                 "size_mb": size_mb,
                 "modified_time": modified_time,
-                "status": "已加载" if self._is_database_loaded(file_path) else "可用"
+                "status": "可用"  # 初始状态，稍后会在扫描时更新
             }
         except Exception as e:
             logger.error(f"获取文件信息失败 {file_path}: {e}")
@@ -99,16 +99,14 @@ class AsyncGeoIPService:
                 "status": "错误"
             }
 
-    def _is_database_loaded(self, file_path: Path) -> bool:
+    def _is_database_loaded(self, db_key: str, db_info: Dict[str, Any]) -> bool:
         """检查数据库是否已加载"""
         try:
-            # 检查当前加载的数据库路径
-            if self.db_reader and hasattr(self.db_reader, '_db_path'):
-                if str(file_path) == self.db_reader._db_path:
-                    return True
-            if self.asn_reader and hasattr(self.asn_reader, '_db_path'):
-                if str(file_path) == self.asn_reader._db_path:
-                    return True
+            # 基于数据库key和类型判断是否为当前使用的数据库
+            if db_info["type"] == "city":
+                return db_key == self.current_city_db and self.db_reader is not None
+            elif db_info["type"] == "asn":
+                return db_key == self.current_asn_db and self.asn_reader is not None
             return False
         except:
             return False
@@ -182,6 +180,14 @@ class AsyncGeoIPService:
         logger.info(f"发现可用数据库文件: {len(self.available_databases)} 个")
         logger.info(f"可用数据库: {available_db_keys}")
 
+    def _update_database_status(self) -> None:
+        """更新数据库状态信息"""
+        for db_key, db_info in self.available_databases.items():
+            if self._is_database_loaded(db_key, db_info):
+                db_info["status"] = "已加载"
+            else:
+                db_info["status"] = "可用"
+
     async def _set_default_databases(self) -> None:
         """设置默认数据库文件（优先选择本地数据库）"""
         # 为城市数据库选择默认值
@@ -239,9 +245,7 @@ class AsyncGeoIPService:
                     geoip2.database.Reader,
                     city_db_path
                 )
-                # 标记数据库为已加载状态
-                if self.current_city_db in self.available_databases:
-                    self.available_databases[self.current_city_db]["status"] = "已加载"
+
                 logger.info(f"城市数据库初始化成功: {city_db_path} ({self.current_city_db})")
             else:
                 logger.warning(f"未找到可用的城市数据库: {self.current_city_db}")
@@ -253,9 +257,7 @@ class AsyncGeoIPService:
                     geoip2.database.Reader,
                     asn_db_path
                 )
-                # 标记数据库为已加载状态
-                if self.current_asn_db in self.available_databases:
-                    self.available_databases[self.current_asn_db]["status"] = "已加载"
+
                 logger.info(f"ASN数据库初始化成功: {asn_db_path} ({self.current_asn_db})")
             else:
                 logger.warning(f"未找到可用的ASN数据库: {self.current_asn_db}")
@@ -263,6 +265,9 @@ class AsyncGeoIPService:
             # 更新统计信息
             self.stats["current_city_db"] = self.current_city_db
             self.stats["current_asn_db"] = self.current_asn_db
+
+            # 更新数据库状态
+            self._update_database_status()
 
         except Exception as e:
             logger.error(f"初始化数据库读取器失败: {e}")

@@ -1222,7 +1222,72 @@ mkdir -p .augment/rules
 #### 新增文件
 - `docs/05-troubleshooting/DATABASE_FILE_SELECTION.md`
 
+## 📅 2025-07-31 - 数据库状态显示问题修复
+
+### 🔧 数据库状态显示逻辑修复
+**时间**: 23:30 - 00:15
+**状态**: ✅ 完成
+
+#### 问题发现
+用户反馈数据库文件独立选择功能中存在状态显示问题：
+- 城市数据库和ASN数据库下拉菜单可能显示多个"当前使用"标识
+- 数据库表格中的"已加载"状态不准确
+- 前后端数据同步存在问题
+
+#### 问题根源
+1. **`_is_database_loaded` 方法逻辑错误**:
+   - 错误地尝试访问 geoip2.database.Reader 的 `_db_path` 属性
+   - 该属性不存在，导致方法总是返回 False
+   - 基于文件路径的判断逻辑不可靠
+
+2. **状态更新机制不统一**:
+   - 在多个地方手动设置状态
+   - 缺乏统一的状态更新机制
+   - 状态更新时机不准确
+
+#### 修复方案
+1. **重写状态判断逻辑**:
+   ```python
+   def _is_database_loaded(self, db_key: str, db_info: Dict[str, Any]) -> bool:
+       # 基于数据库key和类型判断是否为当前使用的数据库
+       if db_info["type"] == "city":
+           return db_key == self.current_city_db and self.db_reader is not None
+       elif db_info["type"] == "asn":
+           return db_key == self.current_asn_db and self.asn_reader is not None
+   ```
+
+2. **统一状态更新机制**:
+   ```python
+   def _update_database_status(self) -> None:
+       for db_key, db_info in self.available_databases.items():
+           if self._is_database_loaded(db_key, db_info):
+               db_info["status"] = "已加载"
+           else:
+               db_info["status"] = "可用"
+   ```
+
+3. **在关键节点调用状态更新**:
+   - 数据库初始化完成后
+   - 数据库切换完成后
+   - 确保状态与实际情况同步
+
+#### 修复效果验证
+- ✅ **唯一性**: 每种数据库类型只有一个"当前使用"标识
+- ✅ **准确性**: 只有当前使用的数据库显示"已加载"
+- ✅ **实时性**: 切换后状态立即正确更新
+- ✅ **一致性**: 所有界面元素显示信息一致
+
+#### 测试验证
+- ✅ **初始状态**: local_city(已加载) + local_asn(已加载)
+- ✅ **切换测试**: ASN数据库 local_asn → api_asn
+- ✅ **切换后状态**: local_city(已加载) + api_asn(已加载) + local_asn(可用)
+- ✅ **下拉菜单**: 正确显示唯一的"当前使用"标识
+
+#### 新增文件
+- `docs/05-troubleshooting/DATABASE_STATUS_DISPLAY_FIX.md`
+
 **🎉 数据库切换功能已全面优化！用户现在可以在下拉菜单中看到详细的数据库信息！**
 **🗂️ 数据库文件独立选择功能完全实现！用户现在可以灵活地选择和组合任意数据库文件！**
+**🔧 数据库状态显示问题完全修复！用户现在可以准确识别当前正在使用的具体数据库文件！**
 
-*最后更新时间: 2025-07-31 23:30*
+*最后更新时间: 2025-07-31 00:15*
