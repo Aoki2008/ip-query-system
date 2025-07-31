@@ -6,12 +6,12 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     host: 'localhost',
-    port: 8080,
+    port: 5173,
     strictPort: false,
     open: false
   },
   preview: {
     host: 'localhost',
-    port: 8080
+    port: 5173
   }
 })

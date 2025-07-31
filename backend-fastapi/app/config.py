@@ -33,12 +33,22 @@ class Settings(BaseSettings):
     
     # GeoIP配置
     geoip_db_path: str = Field(
-        default="./data/GeoLite2-City.mmdb", 
+        default="./data/GeoLite2-City.mmdb",
         description="GeoIP数据库路径"
     )
+    geoip_asn_db_path: str = Field(
+        default="../GeoLite2-ASN.mmdb",
+        description="GeoIP ASN数据库路径"
+    )
     geoip_update_interval: int = Field(
-        default=86400, 
+        default=86400,
         description="GeoIP数据库更新间隔(秒)"
+    )
+
+    # 数据库切换配置
+    current_geoip_source: str = Field(
+        default="local",  # local, api, mixed
+        description="当前使用的GeoIP数据源"
     )
     
     # API配置
@@ -53,7 +63,8 @@ class Settings(BaseSettings):
     cors_origins: List[str] = Field(
         default=[
             "http://localhost:3000",
-            "http://localhost:5173", 
+            "http://localhost:5173",
+            "http://localhost:5174",  # 管理后台
             "http://localhost:8080"
         ],
         description="允许的CORS源"
@@ -63,7 +74,10 @@ class Settings(BaseSettings):
         default=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         description="允许的HTTP方法"
     )
-    cors_allow_headers: List[str] = Field(default=["*"], description="允许的请求头")
+    cors_allow_headers: List[str] = Field(
+        default=["Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"],
+        description="允许的请求头"
+    )
     
     # 性能配置
     max_batch_size: int = Field(default=100, description="最大批量查询数量")
@@ -73,7 +87,34 @@ class Settings(BaseSettings):
     # 监控配置
     enable_metrics: bool = Field(default=True, description="启用指标收集")
     metrics_path: str = Field(default="/metrics", description="指标路径")
-    
+
+    # 数据库配置
+    database_url: str = Field(
+        default="sqlite:///./data/admin.db",
+        description="数据库连接URL"
+    )
+    database_echo: bool = Field(default=False, description="数据库SQL日志")
+    database_pool_size: int = Field(default=5, description="数据库连接池大小")
+    database_max_overflow: int = Field(default=10, description="数据库连接池最大溢出")
+
+    # 管理后台配置
+    admin_secret_key: str = Field(
+        default="dev-secret-key-change-in-production-must-be-32-chars-long",
+        description="管理后台JWT密钥"
+    )
+    admin_access_token_expire_minutes: int = Field(
+        default=15,
+        description="访问令牌过期时间(分钟)"
+    )
+    admin_refresh_token_expire_days: int = Field(
+        default=7,
+        description="刷新令牌过期时间(天)"
+    )
+    admin_max_login_attempts: int = Field(
+        default=5,
+        description="最大登录尝试次数"
+    )
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

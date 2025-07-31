@@ -62,9 +62,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """频率限制检查"""
+        # OPTIONS预检请求不进行频率限制
+        if request.method == "OPTIONS":
+            return await call_next(request)
+
         client_ip = request.client.host if request.client else "unknown"
         current_time = time.time()
-        
+
         # 清理过期记录
         if client_ip in self.requests:
             self.requests[client_ip] = [
@@ -73,19 +77,31 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             ]
         else:
             self.requests[client_ip] = []
-        
+
         # 检查频率限制
         if len(self.requests[client_ip]) >= self.calls_per_minute:
             logger.warning(f"频率限制触发: {client_ip}")
-            return Response(
+
+            # 创建带CORS头的429响应
+            response = Response(
                 content='{"error": {"code": "RATE_LIMIT_ERROR", "message": "请求过于频繁，请稍后再试"}}',
                 status_code=429,
                 media_type="application/json"
             )
-        
+
+            # 添加CORS头
+            origin = request.headers.get("origin")
+            if origin:
+                response.headers["Access-Control-Allow-Origin"] = origin
+                response.headers["Access-Control-Allow-Credentials"] = "true"
+                response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+                response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, Origin, X-Requested-With"
+
+            return response
+
         # 记录请求时间
         self.requests[client_ip].append(current_time)
-        
+
         # 处理请求
         response = await call_next(request)
         return response

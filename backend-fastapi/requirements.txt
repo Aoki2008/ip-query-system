@@ -1,16 +1,23 @@
 # FastAPI核心依赖
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.5.0
-pydantic-settings==2.1.0
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.4
+pydantic-settings==2.7.0
 
 # 异步支持
-aiofiles==23.2.1
-httpx==0.25.2
+aiofiles==24.1.0
+httpx==0.28.1
 
 # 数据库和缓存
-redis==5.0.8
+redis==5.2.1
 aioredis==2.0.1
+sqlalchemy==2.0.36
+alembic==1.14.0
+
+# 认证和安全
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.12
 
 # GeoIP查询
 geoip2==4.8.0

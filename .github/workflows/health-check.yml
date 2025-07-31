@@ -1,0 +1,48 @@
+name: Health Check
+
+on:
+  schedule:
+    # 每天UTC时间00:00运行
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    name: System Health Check
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check project structure
+      run: |
+        echo "🔍 检查项目结构..."
+        ls -la
+        echo "📁 后端目录:"
+        ls -la backend-fastapi/ || echo "后端目录不存在"
+        echo "📁 前端目录:"
+        ls -la frontend-vue3/ || echo "前端目录不存在"
+        echo "📁 管理后台目录:"
+        ls -la frontend-admin/ || echo "管理后台目录不存在"
+        echo "📁 文档目录:"
+        ls -la docs/ || echo "文档目录不存在"
+    
+    - name: Check configuration files
+      run: |
+        echo "🔧 检查配置文件..."
+        echo "Docker Compose:"
+        test -f docker-compose.yml && echo "✅ docker-compose.yml 存在" || echo "❌ docker-compose.yml 不存在"
+        echo "后端配置:"
+        test -f backend-fastapi/requirements.txt && echo "✅ requirements.txt 存在" || echo "❌ requirements.txt 不存在"
+        echo "前端配置:"
+        test -f frontend-vue3/package.json && echo "✅ frontend package.json 存在" || echo "❌ frontend package.json 不存在"
+        test -f frontend-admin/package.json && echo "✅ admin package.json 存在" || echo "❌ admin package.json 不存在"
+    
+    - name: Validate CI configuration
+      run: |
+        echo "🔍 验证CI配置..."
+        test -f .github/workflows/ci.yml && echo "✅ CI配置存在" || echo "❌ CI配置不存在"
+        echo "CI配置内容检查:"
+        grep -q "backend-fastapi" .github/workflows/ci.yml && echo "✅ 包含后端路径" || echo "❌ 缺少后端路径"
+        grep -q "frontend-vue3" .github/workflows/ci.yml && echo "✅ 包含前端路径" || echo "❌ 缺少前端路径"
+        grep -q "frontend-admin" .github/workflows/ci.yml && echo "✅ 包含管理后台路径" || echo "❌ 缺少管理后台路径"

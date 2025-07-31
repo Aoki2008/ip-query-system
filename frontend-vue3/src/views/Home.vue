@@ -7,16 +7,7 @@
           <h1 class="hero-title">🌐 IP查询工具</h1>
           <p class="hero-subtitle">快速、准确、专业的IP地址查询服务</p>
           
-          <!-- 当前IP显示 - 暂时隐藏 -->
-          <div class="current-ip" v-if="false">
-            <h3>🔍 您的当前IP地址</h3>
-            <div class="ip-info">
-              <div class="ip-address">{{ currentIp?.ip }}</div>
-              <div class="ip-location">
-                {{ currentIp?.country }} {{ currentIp?.region }} {{ currentIp?.city }}
-              </div>
-            </div>
-          </div>
+          <!-- 当前IP显示功能已移除以提升性能 -->
         </GlassContainer>
       </div>
 
@@ -129,18 +120,27 @@
           </div>
           
           <div class="results-list">
-            <div 
-              v-for="(result, index) in queryResults" 
+            <div
+              v-for="(result, index) in queryResults"
               :key="index"
               class="result-item"
             >
               <div class="result-ip">{{ result.ip }}</div>
               <div class="result-info">
                 <div class="result-location">
-                  🌍 {{ result.country }} {{ result.region }} {{ result.city }}
+                  🌍 {{ formatLocation(result) }}
                 </div>
                 <div class="result-isp">
-                  🏢 {{ result.isp || '未知ISP' }}
+                  🏢 {{ formatISP(result) }}
+                </div>
+                <div v-if="result.location && (result.location.latitude || result.location.longitude)" class="result-coordinates">
+                  📍 {{ result.location.latitude }}, {{ result.location.longitude }}
+                </div>
+                <div v-if="result.location && result.location.timezone" class="result-timezone">
+                  🕐 {{ result.location.timezone }}
+                </div>
+                <div v-if="result.query_time" class="result-time">
+                  ⚡ 查询耗时: {{ (result.query_time * 1000).toFixed(2) }}ms
                 </div>
               </div>
             </div>
@@ -202,6 +202,8 @@ const querySingleIp = async () => {
     const result = await ipService.queryIp(singleIp.value.trim())
     queryResults.value = [result]
     console.log('查询结果:', result)
+    console.log('格式化位置:', formatLocation(result))
+    console.log('格式化ISP:', formatISP(result))
   } catch (error) {
     console.error('查询失败:', error)
     // 显示错误提示给用户
@@ -291,6 +293,69 @@ const clearResults = () => {
 //     console.error('获取当前IP失败:', error)
 //   }
 // }
+
+// 格式化地理位置信息
+const formatLocation = (result: any) => {
+  const parts = []
+
+  // 检查location对象是否存在
+  if (result.location && typeof result.location === 'object') {
+    const location = result.location
+
+    if (location.country && location.country !== 'null' && location.country !== null) {
+      parts.push(location.country)
+    }
+    if (location.region && location.region !== 'null' && location.region !== null) {
+      parts.push(location.region)
+    }
+    if (location.city && location.city !== 'null' && location.city !== null) {
+      parts.push(location.city)
+    }
+  }
+
+  return parts.length > 0 ? parts.join(', ') : '未知位置'
+}
+
+// 格式化ISP信息
+const formatISP = (result: any) => {
+  // 检查ISP对象的各个字段
+  if (result.isp && typeof result.isp === 'object') {
+    const isp = result.isp
+    const ispParts = []
+
+    // 优先显示ISP名称
+    if (isp.isp && isp.isp !== 'null' && isp.isp !== null) {
+      ispParts.push(`ISP: ${isp.isp}`)
+    }
+
+    // 其次显示组织名称
+    if (isp.organization && isp.organization !== 'null' && isp.organization !== null) {
+      ispParts.push(`组织: ${isp.organization}`)
+    }
+
+    // 再次显示ASN组织
+    if (isp.asn_organization && isp.asn_organization !== 'null' && isp.asn_organization !== null) {
+      ispParts.push(`ASN组织: ${isp.asn_organization}`)
+    }
+
+    // 最后显示ASN号码
+    if (isp.asn && isp.asn !== 'null' && isp.asn !== null) {
+      ispParts.push(`ASN: ${isp.asn}`)
+    }
+
+    // 如果有任何ISP信息，返回组合结果
+    if (ispParts.length > 0) {
+      return ispParts.join(' | ')
+    }
+  }
+
+  // 如果ISP是字符串
+  if (typeof result.isp === 'string' && result.isp && result.isp !== 'null') {
+    return result.isp
+  }
+
+  return '未知ISP'
+}
 
 onMounted(() => {
   // getCurrentIp() // 暂时注释掉
@@ -481,6 +546,26 @@ onMounted(() => {
 .result-isp {
   color: var(--text-secondary);
   font-size: 0.9rem;
+  margin-bottom: var(--space-xs);
+}
+
+.result-coordinates {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: var(--space-xs);
+}
+
+.result-timezone {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: var(--space-xs);
+}
+
+.result-time {
+  color: var(--success-color);
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 /* 功能特色 */

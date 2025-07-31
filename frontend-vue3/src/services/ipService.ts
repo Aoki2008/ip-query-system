@@ -10,7 +10,7 @@ import type {
 
 // API配置
 const API_CONFIG = {
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL: 'http://localhost:8000/api', // 直接使用固定URL，避免环境变量问题
   timeout: 10000
 }
 
@@ -20,7 +20,10 @@ const apiClient = axios.create(API_CONFIG)
 // 请求拦截器
 apiClient.interceptors.request.use(
   (config) => {
-    console.log('发送请求:', config.url)
+    // 生产环境不输出调试信息
+    if (import.meta.env.DEV) {
+      console.log('发送请求:', config.url)
+    }
     return config
   },
   (error) => {
@@ -32,11 +35,22 @@ apiClient.interceptors.request.use(
 // 响应拦截器
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
-    console.log('收到响应:', response.data)
+    // 生产环境不输出调试信息
+    if (import.meta.env.DEV) {
+      console.log('收到响应:', response.data)
+    }
     return response
   },
   (error) => {
     console.error('响应错误:', error)
+    console.error('错误详情:', {
+      message: error.message,
+      code: error.code,
+      config: error.config,
+      request: error.request,
+      response: error.response
+    })
+
     if (error.response) {
       // 服务器返回错误状态码
       const { status, data } = error.response
@@ -44,7 +58,11 @@ apiClient.interceptors.response.use(
       throw new Error(`API错误 ${status}: ${errorData.message || '未知错误'}`)
     } else if (error.request) {
       // 请求发送失败
-      throw new Error('网络连接失败，请检查网络设置')
+      console.error('请求发送失败，可能的原因:')
+      console.error('1. 后端服务未启动 (http://localhost:8000)')
+      console.error('2. CORS配置问题')
+      console.error('3. 网络连接问题')
+      throw new Error('网络连接失败，请检查后端服务是否启动')
     } else {
       // 其他错误
       throw new Error('请求配置错误')
@@ -54,6 +72,19 @@ apiClient.interceptors.response.use(
 
 // IP查询服务
 export const ipService = {
+  // 连接测试
+  async testConnection(): Promise<boolean> {
+    try {
+      console.log('测试后端连接...')
+      const response = await apiClient.get<HealthResponse>('/health')
+      console.log('连接测试成功:', response.data)
+      return true
+    } catch (error) {
+      console.error('连接测试失败:', error)
+      return false
+    }
+  },
+
   // 健康检查
   async healthCheck(): Promise<HealthResponse> {
     try {

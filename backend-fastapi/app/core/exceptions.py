@@ -114,18 +114,39 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     """HTTP异常处理器"""
+
+    # 特殊处理OPTIONS预检请求
+    if request.method == "OPTIONS" and exc.status_code == 405:
+        origin = request.headers.get("origin")
+        if origin:
+            from app.config import settings
+            if origin in settings.cors_origins or "*" in settings.cors_origins:
+                # 返回成功的CORS预检响应
+                response = JSONResponse(
+                    content={"message": "CORS preflight successful"},
+                    status_code=200
+                )
+                response.headers["Access-Control-Allow-Origin"] = origin
+                response.headers["Access-Control-Allow-Credentials"] = "true"
+                response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+                response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept, Origin, X-Requested-With"
+                response.headers["Access-Control-Max-Age"] = "600"
+                return response
+
     logger.warning(
         "HTTP异常",
         status_code=exc.status_code,
         detail=exc.detail,
         path=request.url.path
     )
-    
-    return create_error_response(
+
+    response = create_error_response(
         status_code=exc.status_code,
         message=exc.detail or "请求处理失败",
         error_code="HTTP_ERROR"
     )
+
+    return response
 
 
 async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
