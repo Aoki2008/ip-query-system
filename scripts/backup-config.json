@@ -1,0 +1,43 @@
+{
+  "backup": {
+    "enabled": true,
+    "repository": "https://github.com/Aoki2008/ip-query-system.git",
+    "branch": "main",
+    "schedule": {
+      "enabled": false,
+      "time": "23:00",
+      "frequency": "daily"
+    },
+    "auto_commit": {
+      "enabled": true,
+      "message_prefix": "auto:",
+      "include_timestamp": true
+    },
+    "exclude_patterns": [
+      "node_modules/",
+      ".env",
+      "*.log",
+      "dist/",
+      "build/",
+      ".DS_Store",
+      "Thumbs.db"
+    ],
+    "notifications": {
+      "success": true,
+      "failure": true,
+      "console_output": true
+    }
+  },
+  "git": {
+    "user_name": "Aoki2008",
+    "user_email": "2889832864@qq.com",
+    "remote_name": "origin",
+    "default_branch": "main"
+  },
+  "project": {
+    "name": "IP查询系统",
+    "description": "基于Vue3+FastAPI的IP地址查询系统",
+    "version": "1.0.0",
+    "last_backup": null
+  }
+}
