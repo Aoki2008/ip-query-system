@@ -137,6 +137,7 @@ def create_app() -> FastAPI:
             "http://localhost:3000",
             "http://localhost:5173",
             "http://localhost:5174",
+            "http://localhost:5175",  # 添加管理后台新端口
             "http://localhost:8080"
         ],
         allow_credentials=True,
