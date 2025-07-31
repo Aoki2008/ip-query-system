@@ -45,6 +45,11 @@
           <el-icon><Setting /></el-icon>
           <template #title>系统设置</template>
         </el-menu-item>
+
+        <el-menu-item index="/seo">
+          <el-icon><Search /></el-icon>
+          <template #title>SEO设置</template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -101,6 +106,7 @@ import {
   Lock,
   User,
   Setting,
+  Search,
   Monitor,
   Fold,
   Expand,

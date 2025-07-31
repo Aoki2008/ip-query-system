@@ -31,18 +31,27 @@ api.interceptors.response.use(
   },
   async (error) => {
     if (error.response?.status === 401) {
-      // Token过期，跳转到登录页
-      ElMessage.error('登录已过期，请重新登录')
+      // Token过期，清除本地存储
       localStorage.removeItem('admin_token')
       localStorage.removeItem('admin_refresh_token')
-      window.location.href = '/login'
+
+      // 只有在不是登录页面时才显示错误消息和跳转
+      if (window.location.pathname !== '/login') {
+        ElMessage.error('登录已过期，请重新登录')
+
+        // 延迟跳转，避免在响应拦截器中直接操作路由
+        setTimeout(() => {
+          window.location.href = '/login'
+        }, 1000)
+      }
+
       return Promise.reject(error)
     }
 
     // 其他错误处理
-    const message = error.response?.data?.error?.message || error.message || '请求失败'
+    const message = error.response?.data?.detail || error.response?.data?.message || error.message || '请求失败'
     ElMessage.error(message)
-    
+
     return Promise.reject(error)
   }
 )

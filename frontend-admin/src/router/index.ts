@@ -40,6 +40,12 @@ const router = createRouter({
           name: 'system',
           component: () => import('@/views/SystemView.vue'),
           meta: { title: '系统设置', icon: 'Setting' }
+        },
+        {
+          path: '/seo',
+          name: 'seo',
+          component: () => import('@/views/SeoView.vue'),
+          meta: { title: 'SEO设置', icon: 'Search' }
         }
       ]
     },
@@ -52,9 +58,15 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  
+
+  // 初始化认证状态
+  if (!authStore.initialized) {
+    await authStore.initializeAuth()
+  }
+
+  // 检查是否需要认证
   if (to.meta.requiresAuth !== false && !authStore.isAuthenticated) {
     next('/login')
   } else if (to.path === '/login' && authStore.isAuthenticated) {

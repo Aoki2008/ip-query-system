@@ -28,12 +28,6 @@ from app.data_management.routes import router as data_management_router
 from app.optimization.routes import router as optimization_router
 from app.analytics.routes import router as analytics_router
 from app.monitoring.routes import router as monitoring_router
-from app.admin.models import AdminUser
-from app.admin.auth.dependencies import get_current_active_user
-from app.database import get_db
-from sqlalchemy.orm import Session
-
-
 # 设置日志
 setup_logging()
 logger = get_logger(__name__)
@@ -177,247 +171,21 @@ def create_app() -> FastAPI:
     app.include_router(analytics_router)
     app.include_router(monitoring_router)
 
-    # 添加内联分析路由（临时解决方案，应该移到独立模块）
-    from datetime import datetime, timedelta
-    from sqlalchemy import func, desc
-    from .simple_analytics import SimpleAPILog
+    # SEO配置路由
+    from .seo.routes import router as seo_router
+    app.include_router(seo_router)
 
-    @app.get("/api/admin/analytics/health")
-    async def analytics_health(current_user: AdminUser = Depends(get_current_active_user), db: Session = Depends(get_db)):
-        try:
-            total_logs = db.query(SimpleAPILog).count()
-            recent_logs = db.query(SimpleAPILog).filter(
-                SimpleAPILog.timestamp >= datetime.utcnow() - timedelta(hours=1)
-            ).count()
+    # 管理员分析路由
+    from .admin.analytics_routes import router as admin_analytics_router
+    from .admin.data_routes import router as admin_data_router
+    app.include_router(admin_analytics_router)
+    app.include_router(admin_data_router)
 
-            return {
-                "status": "healthy",
-                "total_api_logs": total_logs,
-                "recent_logs_1h": recent_logs,
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        except Exception as e:
-            return {
-                "status": "error",
-                "message": str(e),
-                "timestamp": datetime.utcnow().isoformat()
-            }
 
-    @app.get("/api/admin/analytics/stats")
-    async def get_api_stats(hours: int = 24, current_user: AdminUser = Depends(get_current_active_user), db: Session = Depends(get_db)):
-        start_time = datetime.utcnow() - timedelta(hours=hours)
 
-        total_requests = db.query(SimpleAPILog).filter(SimpleAPILog.timestamp >= start_time).count()
 
-        if total_requests == 0:
-            return {
-                "total_requests": 0,
-                "avg_response_time": 0,
-                "error_rate": 0,
-                "requests_per_hour": 0,
-                "top_endpoints": []
-            }
 
-        avg_response_time = db.query(func.avg(SimpleAPILog.response_time_ms)).filter(
-            SimpleAPILog.timestamp >= start_time
-        ).scalar() or 0
 
-        error_count = db.query(SimpleAPILog).filter(
-            SimpleAPILog.timestamp >= start_time,
-            SimpleAPILog.status_code >= 400
-        ).count()
-
-        error_rate = (error_count / total_requests * 100) if total_requests > 0 else 0
-        requests_per_hour = total_requests / hours
-
-        return {
-            "total_requests": total_requests,
-            "avg_response_time": avg_response_time,
-            "error_rate": error_rate,
-            "requests_per_hour": requests_per_hour,
-            "top_endpoints": []
-        }
-
-    @app.post("/api/admin/analytics/collect")
-    async def collect_sample_data(current_user: AdminUser = Depends(get_current_active_user), db: Session = Depends(get_db)):
-        import random
-
-        endpoints = [
-            ("/api/query-ip", "POST"),
-            ("/api/admin/auth/login", "POST"),
-            ("/api/admin/auth/profile", "GET"),
-            ("/api/admin/permissions/roles", "GET"),
-            ("/health", "GET")
-        ]
-
-        for _ in range(20):
-            endpoint, method = random.choice(endpoints)
-            status_code = random.choices([200, 201, 400, 401, 404, 500], weights=[70, 10, 8, 5, 4, 3])[0]
-            response_time = random.uniform(50, 2000)
-
-            log_entry = SimpleAPILog(
-                endpoint=endpoint,
-                method=method,
-                status_code=status_code,
-                response_time_ms=response_time
-            )
-
-            db.add(log_entry)
-
-        db.commit()
-
-        return {"message": "已生成20条示例API调用记录"}
-
-    # 数据管理API已移至 data_management/routes.py
-    # 健康检查端点已在各自的路由模块中实现，此处不再重复
-
-    # 简化的日志分析API
-    @app.get("/api/admin/logs/dashboard")
-    async def get_logs_dashboard(current_user: AdminUser = Depends(get_current_active_user), db: Session = Depends(get_db)):
-        try:
-            # 简化的日志统计
-            total_logs = db.query(SimpleAPILog).count()
-            error_logs = db.query(SimpleAPILog).filter(SimpleAPILog.status_code >= 400).count()
-            error_rate = (error_logs / total_logs * 100) if total_logs > 0 else 0
-
-            return {
-                "total_logs": total_logs,
-                "error_logs": error_logs,
-                "error_rate": round(error_rate, 2),
-                "log_levels": {
-                    "info": total_logs - error_logs,
-                    "warning": 0,
-                    "error": error_logs,
-                    "critical": 0
-                },
-                "recent_activity": {
-                    "last_hour": db.query(SimpleAPILog).filter(
-                        SimpleAPILog.timestamp >= datetime.utcnow() - timedelta(hours=1)
-                    ).count(),
-                    "last_24h": db.query(SimpleAPILog).filter(
-                        SimpleAPILog.timestamp >= datetime.utcnow() - timedelta(hours=24)
-                    ).count()
-                },
-                "status": "healthy"
-            }
-        except Exception as e:
-            return {
-                "total_logs": 0,
-                "error_logs": 0,
-                "error_rate": 0,
-                "log_levels": {"info": 0, "warning": 0, "error": 0, "critical": 0},
-                "recent_activity": {"last_hour": 0, "last_24h": 0},
-                "status": "error",
-                "error": str(e)
-            }
-
-    # 简化的数据统计分析API
-    @app.get("/api/admin/data/statistics")
-    async def get_data_statistics(current_user: AdminUser = Depends(get_current_active_user), db: Session = Depends(get_db)):
-        try:
-            # 基于SimpleAPILog的简化统计
-            total_queries = db.query(SimpleAPILog).count()
-            successful_queries = db.query(SimpleAPILog).filter(SimpleAPILog.status_code < 400).count()
-            failed_queries = db.query(SimpleAPILog).filter(SimpleAPILog.status_code >= 400).count()
-            cached_queries = 0  # 简化版本暂不统计缓存
-
-            # 计算比率
-            success_rate = (successful_queries / total_queries * 100) if total_queries > 0 else 0
-            cache_hit_rate = 0  # 简化版本
-
-            # 平均响应时间
-            avg_response_time = db.query(func.avg(SimpleAPILog.response_time_ms)).scalar() or 0
-
-            # 唯一统计（简化）
-            unique_ips = db.query(SimpleAPILog.ip_address.distinct()).count() if total_queries > 0 else 0
-            unique_countries = 5  # 模拟数据
-            unique_cities = 12    # 模拟数据
-            unique_isps = 8       # 模拟数据
-
-            # 热门统计（模拟数据）
-            top_countries = [
-                {"name": "中国", "count": int(total_queries * 0.6), "percentage": 60.0},
-                {"name": "美国", "count": int(total_queries * 0.2), "percentage": 20.0},
-                {"name": "日本", "count": int(total_queries * 0.1), "percentage": 10.0},
-                {"name": "德国", "count": int(total_queries * 0.05), "percentage": 5.0},
-                {"name": "英国", "count": int(total_queries * 0.05), "percentage": 5.0}
-            ]
-
-            top_cities = [
-                {"name": "北京", "count": int(total_queries * 0.3), "percentage": 30.0},
-                {"name": "上海", "count": int(total_queries * 0.2), "percentage": 20.0},
-                {"name": "深圳", "count": int(total_queries * 0.15), "percentage": 15.0},
-                {"name": "广州", "count": int(total_queries * 0.1), "percentage": 10.0},
-                {"name": "杭州", "count": int(total_queries * 0.08), "percentage": 8.0}
-            ]
-
-            top_isps = [
-                {"name": "中国电信", "count": int(total_queries * 0.4), "percentage": 40.0},
-                {"name": "中国联通", "count": int(total_queries * 0.3), "percentage": 30.0},
-                {"name": "中国移动", "count": int(total_queries * 0.2), "percentage": 20.0},
-                {"name": "阿里云", "count": int(total_queries * 0.05), "percentage": 5.0},
-                {"name": "腾讯云", "count": int(total_queries * 0.05), "percentage": 5.0}
-            ]
-
-            # 查询趋势（基于最近24小时）
-            query_trends = []
-            for i in range(24):
-                hour_start = datetime.utcnow() - timedelta(hours=23-i)
-                hour_end = hour_start + timedelta(hours=1)
-                hour_queries = db.query(SimpleAPILog).filter(
-                    SimpleAPILog.timestamp.between(hour_start, hour_end)
-                ).count()
-
-                query_trends.append({
-                    "timestamp": hour_start.isoformat(),
-                    "total_queries": hour_queries,
-                    "successful_queries": int(hour_queries * 0.9),
-                    "failed_queries": int(hour_queries * 0.1),
-                    "cached_queries": 0,
-                    "avg_response_time": avg_response_time,
-                    "unique_ips": max(1, hour_queries // 3)
-                })
-
-            return {
-                "total_queries": total_queries,
-                "successful_queries": successful_queries,
-                "failed_queries": failed_queries,
-                "cached_queries": cached_queries,
-                "success_rate": round(success_rate, 2),
-                "cache_hit_rate": round(cache_hit_rate, 2),
-                "avg_response_time": round(avg_response_time, 2),
-                "unique_ips": unique_ips,
-                "unique_countries": unique_countries,
-                "unique_cities": unique_cities,
-                "unique_isps": unique_isps,
-                "top_countries": top_countries,
-                "top_cities": top_cities,
-                "top_isps": top_isps,
-                "query_trends": query_trends
-            }
-        except Exception as e:
-            return {
-                "total_queries": 0,
-                "successful_queries": 0,
-                "failed_queries": 0,
-                "cached_queries": 0,
-                "success_rate": 0,
-                "cache_hit_rate": 0,
-                "avg_response_time": 0,
-                "unique_ips": 0,
-                "unique_countries": 0,
-                "unique_cities": 0,
-                "unique_isps": 0,
-                "top_countries": [],
-                "top_cities": [],
-                "top_isps": [],
-                "query_trends": [],
-                "error": str(e)
-            }
-
-    # 监控路由已在 monitoring/routes.py 中实现
-
-    # 系统监控端点已移至 monitoring/routes.py，此处不再重复实现
     
     # 根路径
     @app.get("/", response_model=Dict[str, Any])

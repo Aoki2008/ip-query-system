@@ -15,8 +15,19 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-app.use(createPinia())
+const pinia = createPinia()
+
+app.use(pinia)
 app.use(router)
 app.use(ElementPlus)
 
-app.mount('#app')
+// 在应用挂载前初始化认证状态
+import { useAuthStore } from './stores/auth'
+
+async function initApp() {
+  const authStore = useAuthStore()
+  await authStore.initializeAuth()
+  app.mount('#app')
+}
+
+initApp()

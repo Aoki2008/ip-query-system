@@ -62,6 +62,7 @@ class UserInDB(UserBase):
     avatar_url: Optional[str] = None
     is_active: bool = True
     is_premium: bool = False
+    is_admin: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     last_login_at: Optional[datetime] = None
@@ -76,6 +77,7 @@ class User(UserBase):
     avatar_url: Optional[str] = None
     is_active: bool
     is_premium: bool
+    is_admin: bool
     created_at: datetime
     updated_at: datetime
     last_login_at: Optional[datetime] = None

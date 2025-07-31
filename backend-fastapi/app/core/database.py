@@ -51,6 +51,7 @@ class DatabaseManager:
                     avatar_url TEXT,
                     is_active BOOLEAN DEFAULT 1,
                     is_premium BOOLEAN DEFAULT 0,
+                    is_admin BOOLEAN DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     last_login_at TIMESTAMP
@@ -167,15 +168,18 @@ class DatabaseManager:
                 conn.execute("PRAGMA foreign_keys = ON")
 
                 cursor = conn.execute("""
-                    INSERT INTO users (id, username, email, password_hash, full_name, avatar_url)
-                    VALUES (?, ?, ?, ?, ?, ?)
+                    INSERT INTO users (id, username, email, password_hash, full_name, avatar_url, is_active, is_premium, is_admin)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     user_data['id'],
                     user_data['username'],
                     user_data['email'],
                     user_data['password_hash'],
                     user_data.get('full_name'),
-                    user_data.get('avatar_url')
+                    user_data.get('avatar_url'),
+                    user_data.get('is_active', True),
+                    user_data.get('is_premium', False),
+                    user_data.get('is_admin', False)
                 ))
 
                 # 创建默认用户设置

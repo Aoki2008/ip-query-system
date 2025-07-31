@@ -60,6 +60,7 @@ def create_tables():
     from .logging.models import SystemLog, LogAlert, LogStatistic
     from .notifications.models import NotificationChannel, AlertRule, Alert, NotificationLog
     from .data_management.models import IPQueryRecord, QueryStatistic, DataCleanupRule, DataExportTask
+    from .seo.models import SeoConfig
     
     # 创建所有表
     Base.metadata.create_all(bind=engine)

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO功能测试页面</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #4f46e5;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        
+        .section h2 {
+            color: #374151;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .test-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .test-item.warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .test-item.error {
+            border-left-color: #ef4444;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .meta-preview {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        
+        .search-preview {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .search-title {
+            color: #1a0dab;
+            font-size: 18px;
+            text-decoration: underline;
+            margin-bottom: 4px;
+        }
+        
+        .search-url {
+            color: #006621;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .search-description {
+            color: #545454;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+        }
+        
+        .api-test {
+            margin-top: 20px;
+        }
+        
+        .api-result {
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 SEO功能测试页面</h1>
+        
+        <!-- 当前页面SEO状态 -->
+        <div class="section">
+            <h2>📊 当前页面SEO状态</h2>
+            <div id="current-seo-status">
+                <div class="test-item">
+                    <strong>页面标题:</strong> <span id="current-title">-</span>
+                    <span class="status" id="title-status">检测中</span>
+                </div>
+                <div class="test-item">
+                    <strong>Meta描述:</strong> <span id="current-description">-</span>
+                    <span class="status" id="description-status">检测中</span>
+                </div>
+                <div class="test-item">
+                    <strong>Meta关键词:</strong> <span id="current-keywords">-</span>
+                    <span class="status" id="keywords-status">检测中</span>
+                </div>
+                <div class="test-item">
+                    <strong>Open Graph标签:</strong> <span id="og-status">检测中</span>
+                </div>
+                <div class="test-item">
+                    <strong>Twitter Card标签:</strong> <span id="twitter-status">检测中</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SEO预览 -->
+        <div class="section">
+            <h2>🔍 搜索引擎预览</h2>
+            <div class="search-preview">
+                <div class="search-title" id="preview-title">页面标题</div>
+                <div class="search-url" id="preview-url">https://your-domain.com</div>
+                <div class="search-description" id="preview-description">页面描述</div>
+            </div>
+        </div>
+        
+        <!-- Meta标签预览 -->
+        <div class="section">
+            <h2>🏷️ Meta标签预览</h2>
+            <div class="meta-preview" id="meta-tags-preview">
+                正在生成Meta标签...
+            </div>
+        </div>
+        
+        <!-- API测试 -->
+        <div class="section">
+            <h2>🔌 API接口测试</h2>
+            <div class="api-test">
+                <button onclick="testGetSeoConfig()">测试获取SEO配置</button>
+                <button onclick="testGetKeywordSuggestions()">测试获取关键词建议</button>
+                <button onclick="testSeoValidation()">测试SEO验证</button>
+                <button onclick="refreshSeoData()">刷新SEO数据</button>
+                <div class="api-result" id="api-result">点击按钮测试API接口...</div>
+            </div>
+        </div>
+        
+        <!-- SEO评分 -->
+        <div class="section">
+            <h2>📈 SEO评分</h2>
+            <div id="seo-score">
+                <div class="test-item">
+                    <strong>标题评分:</strong> <span id="title-score">-</span>/40
+                </div>
+                <div class="test-item">
+                    <strong>描述评分:</strong> <span id="description-score">-</span>/40
+                </div>
+                <div class="test-item">
+                    <strong>关键词评分:</strong> <span id="keywords-score">-</span>/20
+                </div>
+                <div class="test-item">
+                    <strong>总体评分:</strong> <span id="total-score">-</span>/100
+                    <span class="status" id="score-status">计算中</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API基础URL
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        // 检测当前页面SEO状态
+        function detectCurrentSeo() {
+            // 检测标题
+            const title = document.title;
+            document.getElementById('current-title').textContent = title;
+            document.getElementById('preview-title').textContent = title;
+            
+            const titleStatus = title.length >= 10 && title.length <= 60 ? 'success' : 
+                               title.length < 10 ? 'warning' : 'error';
+            const titleStatusEl = document.getElementById('title-status');
+            titleStatusEl.textContent = `${title.length}字符`;
+            titleStatusEl.className = `status ${titleStatus}`;
+            
+            // 检测描述
+            const descMeta = document.querySelector('meta[name="description"]');
+            const description = descMeta ? descMeta.content : '未设置';
+            document.getElementById('current-description').textContent = description;
+            document.getElementById('preview-description').textContent = description;
+            
+            const descStatus = description !== '未设置' && description.length >= 50 && description.length <= 160 ? 'success' : 
+                              description === '未设置' ? 'error' : 'warning';
+            const descStatusEl = document.getElementById('description-status');
+            descStatusEl.textContent = description === '未设置' ? '未设置' : `${description.length}字符`;
+            descStatusEl.className = `status ${descStatus}`;
+            
+            // 检测关键词
+            const keywordsMeta = document.querySelector('meta[name="keywords"]');
+            const keywords = keywordsMeta ? keywordsMeta.content : '未设置';
+            document.getElementById('current-keywords').textContent = keywords;
+            
+            const keywordsCount = keywords === '未设置' ? 0 : keywords.split(',').length;
+            const keywordsStatus = keywordsCount >= 5 && keywordsCount <= 10 ? 'success' : 
+                                  keywordsCount === 0 ? 'error' : 'warning';
+            const keywordsStatusEl = document.getElementById('keywords-status');
+            keywordsStatusEl.textContent = keywords === '未设置' ? '未设置' : `${keywordsCount}个`;
+            keywordsStatusEl.className = `status ${keywordsStatus}`;
+            
+            // 检测Open Graph
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            const ogType = document.querySelector('meta[property="og:type"]');
+            const ogStatus = ogTitle && ogDesc && ogType ? '已配置' : '未配置';
+            document.getElementById('og-status').textContent = ogStatus;
+            
+            // 检测Twitter Card
+            const twitterCard = document.querySelector('meta[name="twitter:card"]');
+            const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+            const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+            const twitterStatus = twitterCard && twitterTitle && twitterDesc ? '已配置' : '未配置';
+            document.getElementById('twitter-status').textContent = twitterStatus;
+            
+            // 生成Meta标签预览
+            generateMetaPreview(title, description, keywords);
+            
+            // 计算SEO评分
+            calculateSeoScore(title, description, keywordsCount);
+        }
+        
+        // 生成Meta标签预览
+        function generateMetaPreview(title, description, keywords) {
+            const metaTags = `<title>${title}</title>
+<meta name="description" content="${description}" />
+<meta name="keywords" content="${keywords}" />
+<meta property="og:title" content="${title}" />
+<meta property="og:description" content="${description}" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="${title}" />
+<meta name="twitter:description" content="${description}" />`;
+            
+            document.getElementById('meta-tags-preview').textContent = metaTags;
+        }
+        
+        // 计算SEO评分
+        function calculateSeoScore(title, description, keywordsCount) {
+            let titleScore = 0;
+            let descScore = 0;
+            let keywordsScore = 0;
+            
+            // 标题评分
+            if (title.length >= 10 && title.length <= 60) {
+                titleScore = 40;
+            } else if (title.length < 10) {
+                titleScore = 20;
+            } else {
+                titleScore = 30;
+            }
+            
+            // 描述评分
+            if (description !== '未设置') {
+                if (description.length >= 50 && description.length <= 160) {
+                    descScore = 40;
+                } else if (description.length < 50) {
+                    descScore = 20;
+                } else {
+                    descScore = 30;
+                }
+            }
+            
+            // 关键词评分
+            if (keywordsCount >= 5 && keywordsCount <= 10) {
+                keywordsScore = 20;
+            } else if (keywordsCount > 0 && keywordsCount < 5) {
+                keywordsScore = 15;
+            } else if (keywordsCount === 0) {
+                keywordsScore = 0;
+            } else {
+                keywordsScore = 10;
+            }
+            
+            const totalScore = titleScore + descScore + keywordsScore;
+            
+            document.getElementById('title-score').textContent = titleScore;
+            document.getElementById('description-score').textContent = descScore;
+            document.getElementById('keywords-score').textContent = keywordsScore;
+            document.getElementById('total-score').textContent = totalScore;
+            
+            const scoreStatus = totalScore >= 80 ? 'success' : totalScore >= 60 ? 'warning' : 'error';
+            const scoreStatusEl = document.getElementById('score-status');
+            scoreStatusEl.textContent = totalScore >= 80 ? '优秀' : totalScore >= 60 ? '良好' : '需改进';
+            scoreStatusEl.className = `status ${scoreStatus}`;
+        }
+        
+        // 测试获取SEO配置
+        async function testGetSeoConfig() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/seo/public/config`);
+                const data = await response.json();
+                document.getElementById('api-result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('api-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // 测试获取关键词建议
+        async function testGetKeywordSuggestions() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/seo/keywords/suggestions`);
+                const data = await response.json();
+                document.getElementById('api-result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('api-result').textContent = `错误: ${error.message}`;
+            }
+        }
+        
+        // 测试SEO验证
+        function testSeoValidation() {
+            const testConfig = {
+                title: "IP查询工具 - 专业的IP地址查询服务",
+                description: "专业的IP地址查询工具，支持单个和批量查询，提供准确的地理位置信息、ISP信息和网络分析功能。",
+                keywords: ["IP查询", "IP地址查询", "地理位置", "网络工具"]
+            };
+            
+            const errors = validateSeoConfig(testConfig);
+            const result = errors.length === 0 ? "验证通过" : `验证失败: ${errors.join(', ')}`;
+            document.getElementById('api-result').textContent = result;
+        }
+        
+        // SEO配置验证函数
+        function validateSeoConfig(config) {
+            const errors = [];
+            
+            if (!config.title || config.title.trim().length === 0) {
+                errors.push('网站标题不能为空');
+            } else if (config.title.length < 10) {
+                errors.push('网站标题长度不能少于10个字符');
+            } else if (config.title.length > 60) {
+                errors.push('网站标题长度不能超过60个字符');
+            }
+            
+            if (!config.description || config.description.trim().length === 0) {
+                errors.push('网站描述不能为空');
+            } else if (config.description.length < 50) {
+                errors.push('网站描述长度不能少于50个字符');
+            } else if (config.description.length > 160) {
+                errors.push('网站描述长度不能超过160个字符');
+            }
+            
+            if (config.keywords.length > 10) {
+                errors.push('关键词数量不能超过10个');
+            }
+            
+            return errors;
+        }
+        
+        // 刷新SEO数据
+        function refreshSeoData() {
+            detectCurrentSeo();
+            document.getElementById('api-result').textContent = 'SEO数据已刷新';
+        }
+        
+        // 页面加载时检测SEO状态
+        window.onload = function() {
+            detectCurrentSeo();
+            document.getElementById('preview-url').textContent = window.location.href;
+        };
+    </script>
+</body>
+</html>

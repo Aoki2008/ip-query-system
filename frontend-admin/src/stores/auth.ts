@@ -25,8 +25,9 @@ export const useAuthStore = defineStore('auth', () => {
   const refreshToken = ref<string | null>(localStorage.getItem('admin_refresh_token'))
   const user = ref<User | null>(null)
   const loading = ref(false)
+  const initialized = ref(false)
 
-  const isAuthenticated = computed(() => !!token.value)
+  const isAuthenticated = computed(() => !!token.value && !!user.value)
 
   // API实例已经在拦截器中处理了token
 
@@ -77,8 +78,28 @@ export const useAuthStore = defineStore('auth', () => {
       return true
     } catch (error) {
       console.error('Get profile failed:', error)
+      // 如果获取用户信息失败，清除token
+      await logout()
       return false
     }
+  }
+
+  const initializeAuth = async () => {
+    if (initialized.value) return
+
+    if (token.value) {
+      // 如果有token，尝试获取用户信息
+      const success = await getProfile()
+      if (!success) {
+        // 如果获取用户信息失败，清除认证状态
+        token.value = null
+        refreshToken.value = null
+        localStorage.removeItem('admin_token')
+        localStorage.removeItem('admin_refresh_token')
+      }
+    }
+
+    initialized.value = true
   }
 
   const refreshAccessToken = async () => {
@@ -106,10 +127,12 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken,
     user,
     loading,
+    initialized,
     isAuthenticated,
     login,
     logout,
     getProfile,
-    refreshAccessToken
+    refreshAccessToken,
+    initializeAuth
   }
 })
