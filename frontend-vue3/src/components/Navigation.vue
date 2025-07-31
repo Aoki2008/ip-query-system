@@ -3,7 +3,7 @@
     <div class="container">
       <div class="logo-container">
         <div class="logo">
-          <div class="logo-icon">●</div>
+          <AppLogo size="normal" />
         </div>
         <div class="site-title">
           <h1>IP查询工具</h1>
@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import AppLogo from './AppLogo.vue'
 
 // 下拉菜单状态
 const toolsDropdownOpen = ref(false)

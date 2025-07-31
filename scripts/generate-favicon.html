@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP查询系统 - Favicon生成器</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        h1 {
+            color: #4f46e5;
+            margin-bottom: 30px;
+        }
+        
+        .favicon-preview {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .favicon-size {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .favicon-canvas {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .instructions {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 IP查询系统 Favicon生成器</h1>
+        <p>为IP查询系统生成不同尺寸的favicon图标</p>
+        
+        <div class="favicon-preview">
+            <div class="favicon-size">
+                <canvas id="favicon16" class="favicon-canvas" width="16" height="16"></canvas>
+                <span>16×16</span>
+            </div>
+            <div class="favicon-size">
+                <canvas id="favicon32" class="favicon-canvas" width="32" height="32"></canvas>
+                <span>32×32</span>
+            </div>
+            <div class="favicon-size">
+                <canvas id="favicon48" class="favicon-canvas" width="48" height="48"></canvas>
+                <span>48×48</span>
+            </div>
+            <div class="favicon-size">
+                <canvas id="favicon64" class="favicon-canvas" width="64" height="64"></canvas>
+                <span>64×64</span>
+            </div>
+        </div>
+        
+        <button onclick="generateFavicons()">🎨 生成Favicon</button>
+        <button onclick="downloadAll()">📥 下载所有尺寸</button>
+        
+        <div class="instructions">
+            <h3>📋 使用说明：</h3>
+            <ol>
+                <li>点击"生成Favicon"按钮生成不同尺寸的图标</li>
+                <li>点击"下载所有尺寸"下载图标文件</li>
+                <li>将下载的图标文件放置到 <code>frontend-vue3/public/</code> 目录</li>
+                <li>在 <code>index.html</code> 中添加favicon链接</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function drawLogo(ctx, size) {
+            const scale = size / 48;
+            const center = size / 2;
+            
+            // 清空画布
+            ctx.clearRect(0, 0, size, size);
+            
+            // 创建渐变
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#4f46e5');
+            gradient.addColorStop(0.5, '#7c3aed');
+            gradient.addColorStop(1, '#2563eb');
+            
+            const accentGradient = ctx.createLinearGradient(0, 0, size, size);
+            accentGradient.addColorStop(0, '#06b6d4');
+            accentGradient.addColorStop(1, '#0891b2');
+            
+            // 外圈
+            ctx.strokeStyle = gradient;
+            ctx.globalAlpha = 0.6;
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.arc(center, center, 20 * scale, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // 中心节点
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(center, center, 6 * scale, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // 连接线
+            ctx.strokeStyle = gradient;
+            ctx.globalAlpha = 0.7;
+            ctx.lineWidth = 1.5 * scale;
+            ctx.lineCap = 'round';
+            
+            // 主要连接线
+            const lines = [
+                [center, center - 6*scale, center, center - 16*scale],
+                [center, center + 6*scale, center, center + 16*scale],
+                [center - 6*scale, center, center - 16*scale, center],
+                [center + 6*scale, center, center + 16*scale, center]
+            ];
+            
+            lines.forEach(([x1, y1, x2, y2]) => {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            });
+            
+            // 外围节点
+            ctx.fillStyle = accentGradient;
+            ctx.globalAlpha = 0.8;
+            const nodes = [
+                [center, center - 16*scale, 2*scale],
+                [center, center + 16*scale, 2*scale],
+                [center - 16*scale, center, 2*scale],
+                [center + 16*scale, center, 2*scale]
+            ];
+            
+            nodes.forEach(([x, y, r]) => {
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            // 中心高光
+            ctx.fillStyle = accentGradient;
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.arc(center - 3*scale, center - 3*scale, 2*scale, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.globalAlpha = 1;
+        }
+        
+        function generateFavicons() {
+            const sizes = [16, 32, 48, 64];
+            
+            sizes.forEach(size => {
+                const canvas = document.getElementById(`favicon${size}`);
+                const ctx = canvas.getContext('2d');
+                drawLogo(ctx, size);
+            });
+        }
+        
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function downloadAll() {
+            const sizes = [16, 32, 48, 64];
+            
+            sizes.forEach(size => {
+                const canvas = document.getElementById(`favicon${size}`);
+                downloadCanvas(canvas, `favicon-${size}x${size}.png`);
+            });
+            
+            // 生成ICO文件说明
+            setTimeout(() => {
+                alert('📁 图标文件已下载！\n\n请使用在线ICO转换工具将PNG文件转换为favicon.ico，\n或使用专业工具合并多个尺寸到一个ICO文件中。');
+            }, 1000);
+        }
+        
+        // 页面加载时自动生成
+        window.onload = function() {
+            generateFavicons();
+        };
+    </script>
+</body>
+</html>

@@ -106,46 +106,10 @@
 
       <!-- 查询结果 -->
       <div v-if="queryResults.length > 0" class="results-section">
-        <GlassContainer variant="card" class="results-card">
-          <div class="results-header">
-            <h2>查询结果</h2>
-            <div class="results-actions">
-              <button class="btn btn-secondary" @click="exportResults">
-                导出结果
-              </button>
-              <button class="btn btn-secondary" @click="clearResults">
-                清空结果
-              </button>
-            </div>
-          </div>
-          
-          <div class="results-list">
-            <div
-              v-for="(result, index) in queryResults"
-              :key="index"
-              class="result-item"
-            >
-              <div class="result-ip">{{ result.ip }}</div>
-              <div class="result-info">
-                <div class="result-location">
-                  {{ formatLocation(result) }}
-                </div>
-                <div class="result-isp">
-                  {{ formatISP(result) }}
-                </div>
-                <div v-if="result.location && (result.location.latitude || result.location.longitude)" class="result-coordinates">
-                  坐标: {{ result.location.latitude }}, {{ result.location.longitude }}
-                </div>
-                <div v-if="result.location && result.location.timezone" class="result-timezone">
-                  时区: {{ result.location.timezone }}
-                </div>
-                <div v-if="result.query_time" class="result-time">
-                  查询耗时: {{ (result.query_time * 1000).toFixed(2) }}ms
-                </div>
-              </div>
-            </div>
-          </div>
-        </GlassContainer>
+        <BatchResultsTable
+          :results="formattedResults"
+          @export="handleExport"
+        />
       </div>
 
       <!-- 功能特色 -->
@@ -177,9 +141,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import GlassContainer from '../components/GlassContainer.vue'
 import FeatureIcon from '../components/FeatureIcon.vue'
+import BatchResultsTable from '../components/BatchResultsTable.vue'
 import { ipService, fileService } from '../services/ipService'
 
 // 响应式数据
@@ -193,6 +158,23 @@ const queryResults = ref<any[]>([])
 
 // 示例IP地址
 const exampleIps = ['8.8.8.8', '114.114.114.114', '1.1.1.1', '208.67.222.222']
+
+// 格式化结果用于BatchResultsTable
+const formattedResults = computed(() => {
+  return queryResults.value.map((result, index) => ({
+    ip: result.ip,
+    country: result.location?.country || '',
+    city: result.location?.city || '',
+    isp: result.isp?.isp || '',
+    asn: result.isp?.asn ? `${result.isp.asn}` : '',
+    coordinates: result.location?.latitude && result.location?.longitude
+      ? `${result.location.latitude}, ${result.location.longitude}`
+      : '',
+    timezone: result.location?.timezone || '',
+    queryTime: result.query_time ? result.query_time * 1000 : 0,
+    error: result.error || null
+  }))
+})
 
 // 单个IP查询
 const querySingleIp = async () => {
@@ -283,6 +265,67 @@ const exportResults = () => {
 // 清空结果
 const clearResults = () => {
   queryResults.value = []
+}
+
+// 处理导出
+const handleExport = (format: string, data: any[]) => {
+  try {
+    if (format === 'csv') {
+      exportToCSV(data)
+    } else if (format === 'json') {
+      exportToJSON(data)
+    } else if (format === 'excel') {
+      exportToExcel(data)
+    }
+  } catch (error) {
+    console.error('导出失败:', error)
+    errorMessage.value = '导出失败，请稍后重试'
+  }
+}
+
+// 导出为CSV
+const exportToCSV = (data: any[]) => {
+  const headers = ['IP地址', '国家', '城市', 'ISP', 'ASN', '坐标', '时区', '查询时间(ms)', '状态']
+  const csvContent = [
+    headers.join(','),
+    ...data.map(row => [
+      row.ip,
+      row.country,
+      row.city,
+      row.isp,
+      row.asn,
+      row.coordinates,
+      row.timezone,
+      row.queryTime.toFixed(2),
+      row.error ? '失败' : '成功'
+    ].map(field => `"${field}"`).join(','))
+  ].join('\n')
+
+  downloadFile(csvContent, 'ip-query-results.csv', 'text/csv')
+}
+
+// 导出为JSON
+const exportToJSON = (data: any[]) => {
+  const jsonContent = JSON.stringify(data, null, 2)
+  downloadFile(jsonContent, 'ip-query-results.json', 'application/json')
+}
+
+// 导出为Excel (简化版CSV)
+const exportToExcel = (data: any[]) => {
+  exportToCSV(data) // 简化实现，实际可以使用专门的Excel库
+}
+
+// 下载文件
+const downloadFile = (content: string, filename: string, mimeType: string) => {
+  const blob = new Blob([content], { type: mimeType })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
 }
 
 // 获取当前IP (暂时禁用)
