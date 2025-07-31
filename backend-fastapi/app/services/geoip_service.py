@@ -117,41 +117,11 @@ class AsyncGeoIPService:
             return False
 
     async def _scan_available_databases(self) -> None:
-        """扫描可用的数据库文件"""
+        """扫描可用的数据库文件（仅扫描API目录）"""
         self.available_databases = {}
         available_db_keys = []
 
-        # 检查本地数据库
-        local_city_path = Path(settings.geoip_db_path)
-        local_asn_path = Path(settings.geoip_asn_db_path)
-
-        if local_city_path.exists():
-            db_key = "local_city"
-            self.available_databases[db_key] = {
-                "key": db_key,
-                "path": str(local_city_path),
-                "type": "city",
-                "source_location": "本地数据目录",
-                "display_name": f"城市数据库 (data目录)",
-                "file_name": local_city_path.name,
-                **self._get_file_info(local_city_path)
-            }
-            available_db_keys.append(db_key)
-
-        if local_asn_path.exists():
-            db_key = "local_asn"
-            self.available_databases[db_key] = {
-                "key": db_key,
-                "path": str(local_asn_path),
-                "type": "asn",
-                "source_location": "项目根目录",
-                "display_name": f"ASN数据库 (根目录)",
-                "file_name": local_asn_path.name,
-                **self._get_file_info(local_asn_path)
-            }
-            available_db_keys.append(db_key)
-
-        # 检查API目录数据库
+        # 仅检查API目录数据库（统一数据库存储路径）
         api_city_path = Path("API/GeoLite2-City.mmdb")
         api_asn_path = Path("API/GeoLite2-ASN.mmdb")
         api_country_path = Path("API/GeoLite2-Country.mmdb")
@@ -208,24 +178,24 @@ class AsyncGeoIPService:
                 db_info["status"] = "可用"
 
     async def _set_default_databases(self) -> None:
-        """设置默认数据库文件（优先选择本地数据库）"""
+        """设置默认数据库文件（从API目录选择）"""
         # 为城市数据库选择默认值
         city_dbs = [key for key, db in self.available_databases.items() if db["type"] == "city"]
         if city_dbs:
-            # 优先选择本地城市数据库
-            self.current_city_db = next((key for key in city_dbs if key.startswith("local_")), city_dbs[0])
+            # 选择API目录的城市数据库
+            self.current_city_db = city_dbs[0]  # 现在只有api_city
 
         # 为ASN数据库选择默认值
         asn_dbs = [key for key, db in self.available_databases.items() if db["type"] == "asn"]
         if asn_dbs:
-            # 优先选择本地ASN数据库
-            self.current_asn_db = next((key for key in asn_dbs if key.startswith("local_")), asn_dbs[0])
+            # 选择API目录的ASN数据库
+            self.current_asn_db = asn_dbs[0]  # 现在只有api_asn
 
         # 为国家数据库选择默认值
         country_dbs = [key for key, db in self.available_databases.items() if db["type"] == "country"]
         if country_dbs:
-            # 优先选择本地国家数据库，如果没有则选择API目录的
-            self.current_country_db = next((key for key in country_dbs if key.startswith("local_")), country_dbs[0])
+            # 选择API目录的国家数据库
+            self.current_country_db = country_dbs[0]  # 现在只有api_country
 
         # 更新统计信息
         self.stats["current_city_db"] = self.current_city_db
@@ -615,27 +585,43 @@ class AsyncGeoIPService:
 
             # 验证并设置城市数据库
             if city_db_key is not None:
-                if city_db_key not in self.available_databases:
-                    raise ValueError(f"不支持的城市数据库: {city_db_key}")
-                if self.available_databases[city_db_key]["type"] != "city":
-                    raise ValueError(f"数据库类型错误: {city_db_key} 不是城市数据库")
-                self.current_city_db = city_db_key
+                if city_db_key == "" or city_db_key == "null":
+                    # 空字符串或"null"表示不使用城市数据库
+                    self.current_city_db = ""
+                else:
+                    if city_db_key not in self.available_databases:
+                        raise ValueError(f"不支持的城市数据库: {city_db_key}")
+                    if self.available_databases[city_db_key]["type"] != "city":
+                        raise ValueError(f"数据库类型错误: {city_db_key} 不是城市数据库")
+                    self.current_city_db = city_db_key
 
             # 验证并设置ASN数据库
             if asn_db_key is not None:
-                if asn_db_key not in self.available_databases:
-                    raise ValueError(f"不支持的ASN数据库: {asn_db_key}")
-                if self.available_databases[asn_db_key]["type"] != "asn":
-                    raise ValueError(f"数据库类型错误: {asn_db_key} 不是ASN数据库")
-                self.current_asn_db = asn_db_key
+                if asn_db_key == "" or asn_db_key == "null":
+                    # 空字符串或"null"表示不使用ASN数据库
+                    self.current_asn_db = ""
+                else:
+                    if asn_db_key not in self.available_databases:
+                        raise ValueError(f"不支持的ASN数据库: {asn_db_key}")
+                    if self.available_databases[asn_db_key]["type"] != "asn":
+                        raise ValueError(f"数据库类型错误: {asn_db_key} 不是ASN数据库")
+                    self.current_asn_db = asn_db_key
 
             # 验证并设置国家数据库
             if country_db_key is not None:
-                if country_db_key not in self.available_databases:
-                    raise ValueError(f"不支持的国家数据库: {country_db_key}")
-                if self.available_databases[country_db_key]["type"] != "country":
-                    raise ValueError(f"数据库类型错误: {country_db_key} 不是国家数据库")
-                self.current_country_db = country_db_key
+                if country_db_key == "" or country_db_key == "null":
+                    # 空字符串或"null"表示不使用国家数据库
+                    self.current_country_db = ""
+                else:
+                    if country_db_key not in self.available_databases:
+                        raise ValueError(f"不支持的国家数据库: {country_db_key}")
+                    if self.available_databases[country_db_key]["type"] != "country":
+                        raise ValueError(f"数据库类型错误: {country_db_key} 不是国家数据库")
+                    self.current_country_db = country_db_key
+
+            # 验证至少选择了一个数据库
+            if not any([self.current_city_db, self.current_asn_db, self.current_country_db]):
+                raise ValueError("至少需要选择一个数据库进行查询")
 
             # 重新初始化读取器
             await self._initialize_readers()

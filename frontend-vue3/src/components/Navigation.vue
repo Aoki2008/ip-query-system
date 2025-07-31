@@ -3,7 +3,7 @@
     <div class="container">
       <div class="logo-container">
         <div class="logo">
-          <div class="logo-icon">🌐</div>
+          <div class="logo-icon">●</div>
         </div>
         <div class="site-title">
           <h1>IP查询工具</h1>
@@ -24,7 +24,7 @@
       <ul class="nav-list" :class="{ 'mobile-open': mobileMenuOpen }">
         <li class="nav-item">
           <router-link to="/" class="nav-link" @click="closeMobileMenu">
-            🏠 首页
+            首页
           </router-link>
         </li>
         
@@ -34,7 +34,7 @@
             class="nav-link dropdown-toggle"
             @click.prevent="toggleToolsDropdown"
           >
-            🛠️ 工具箱 <span class="dropdown-arrow">▼</span>
+            工具箱 <span class="dropdown-arrow">▼</span>
           </a>
           <ul class="dropdown-menu">
             <li>
@@ -43,7 +43,7 @@
                 class="nav-link"
                 @click="closeMobileMenu"
               >
-                🔍 IP查询
+                IP查询
               </router-link>
             </li>
           </ul>
@@ -55,7 +55,7 @@
             class="nav-link dropdown-toggle"
             @click.prevent="toggleHelpDropdown"
           >
-            ❓ 使用帮助 <span class="dropdown-arrow">▼</span>
+            使用帮助 <span class="dropdown-arrow">▼</span>
           </a>
           <ul class="dropdown-menu">
             <li>
@@ -64,7 +64,7 @@
                 class="nav-link"
                 @click="closeMobileMenu"
               >
-                📖 使用指南
+                使用指南
               </router-link>
             </li>
             <li>
@@ -73,7 +73,7 @@
                 class="nav-link"
                 @click="closeMobileMenu"
               >
-                ❓ 常见问题
+                常见问题
               </router-link>
             </li>
           </ul>
@@ -85,7 +85,7 @@
             class="nav-link"
             @click="closeMobileMenu"
           >
-            ℹ️ 关于我们
+            关于我们
           </router-link>
         </li>
       </ul>

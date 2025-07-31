@@ -9,7 +9,7 @@
     <el-card style="margin-bottom: 20px;">
       <template #header>
         <div class="card-header">
-          <span>🗄️ 数据库管理</span>
+          <span>数据库管理</span>
           <el-button type="primary" size="small" @click="refreshDatabaseInfo" :loading="loading">
             <el-icon><Refresh /></el-icon>
             刷新
@@ -45,6 +45,12 @@
                 {{ getDatabaseStatusText() }}
               </el-tag>
             </div>
+            <div class="info-item">
+              <span class="label">选择模式：</span>
+              <el-tag :type="getSelectionModeType()">
+                {{ getSelectionModeText() }}
+              </el-tag>
+            </div>
           </div>
         </el-col>
 
@@ -52,13 +58,27 @@
           <div class="database-switch">
             <h4>切换数据库文件</h4>
             <el-form :model="switchForm" label-width="120px">
-              <el-form-item label="城市数据库">
+              <el-form-item>
+                <template #label>
+                  <div class="database-label">
+                    <el-switch
+                      v-model="databaseSwitches.cityEnabled"
+                      @change="onDatabaseSwitchChange('city', $event)"
+                      :disabled="!canDisableDatabase('city')"
+                      class="database-switch"
+                    />
+                    <span class="label-text">城市数据库</span>
+                  </div>
+                </template>
                 <el-select
                   v-model="switchForm.cityDb"
                   placeholder="选择城市数据库文件"
                   style="width: 100%"
                   popper-class="database-file-dropdown"
+                  clearable
+                  :disabled="!databaseSwitches.cityEnabled"
                 >
+
                   <el-option
                     v-for="(db, key) in detailedDatabaseInfo.city_databases"
                     :key="key"
@@ -104,13 +124,27 @@
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="ASN数据库">
+              <el-form-item>
+                <template #label>
+                  <div class="database-label">
+                    <el-switch
+                      v-model="databaseSwitches.asnEnabled"
+                      @change="onDatabaseSwitchChange('asn', $event)"
+                      :disabled="!canDisableDatabase('asn')"
+                      class="database-switch"
+                    />
+                    <span class="label-text">ASN数据库</span>
+                  </div>
+                </template>
                 <el-select
                   v-model="switchForm.asnDb"
                   placeholder="选择ASN数据库文件"
                   style="width: 100%"
                   popper-class="database-file-dropdown"
+                  clearable
+                  :disabled="!databaseSwitches.asnEnabled"
                 >
+
                   <el-option
                     v-for="(db, key) in detailedDatabaseInfo.asn_databases"
                     :key="key"
@@ -156,13 +190,27 @@
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="国家数据库">
+              <el-form-item>
+                <template #label>
+                  <div class="database-label">
+                    <el-switch
+                      v-model="databaseSwitches.countryEnabled"
+                      @change="onDatabaseSwitchChange('country', $event)"
+                      :disabled="!canDisableDatabase('country')"
+                      class="database-switch"
+                    />
+                    <span class="label-text">国家数据库</span>
+                  </div>
+                </template>
                 <el-select
                   v-model="switchForm.countryDb"
                   placeholder="选择国家数据库文件"
                   style="width: 100%"
                   popper-class="database-file-dropdown"
+                  clearable
+                  :disabled="!databaseSwitches.countryEnabled"
                 >
+
                   <el-option
                     v-for="(db, key) in detailedDatabaseInfo.country_databases"
                     :key="key"
@@ -249,7 +297,7 @@
       <el-col :span="12">
         <el-card>
           <template #header>
-            <span>📊 系统统计</span>
+            <span>系统统计</span>
           </template>
 
           <div class="system-stats" v-if="systemStats">
@@ -280,7 +328,7 @@
       <el-col :span="12">
         <el-card>
           <template #header>
-            <span>🛠️ 系统操作</span>
+            <span>系统操作</span>
           </template>
 
           <div class="system-actions">
@@ -306,7 +354,7 @@
     <!-- 系统信息 -->
     <el-card style="margin-top: 20px;">
       <template #header>
-        <span>ℹ️ 系统信息</span>
+        <span>系统信息</span>
       </template>
 
       <el-row :gutter="20">
@@ -412,6 +460,13 @@ const switchForm = ref({
   countryDb: ''
 })
 
+// 数据库开关状态
+const databaseSwitches = ref({
+  cityEnabled: true,
+  asnEnabled: true,
+  countryEnabled: true
+})
+
 // 计算属性
 const databaseTableData = computed(() => {
   const data = []
@@ -440,12 +495,35 @@ const databaseTableData = computed(() => {
 
 // 计算是否可以切换数据库
 const canSwitchDatabase = computed(() => {
-  const hasChanges = (
-    (switchForm.value.cityDb && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) ||
-    (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) ||
-    (switchForm.value.countryDb && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db)
+  // 检查开关状态变化
+  const switchChanges = (
+    (databaseSwitches.value.cityEnabled !== (databaseInfo.value.current_databases?.city_db !== '')) ||
+    (databaseSwitches.value.asnEnabled !== (databaseInfo.value.current_databases?.asn_db !== '')) ||
+    (databaseSwitches.value.countryEnabled !== (databaseInfo.value.current_databases?.country_db !== ''))
   )
-  return hasChanges
+
+  // 检查数据库选择变化
+  const dbChanges = (
+    (databaseSwitches.value.cityEnabled && switchForm.value.cityDb !== undefined && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) ||
+    (databaseSwitches.value.asnEnabled && switchForm.value.asnDb !== undefined && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) ||
+    (databaseSwitches.value.countryEnabled && switchForm.value.countryDb !== undefined && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db)
+  )
+
+  // 确保至少启用了一个数据库
+  const hasAtLeastOneEnabled = (
+    databaseSwitches.value.cityEnabled ||
+    databaseSwitches.value.asnEnabled ||
+    databaseSwitches.value.countryEnabled
+  )
+
+  // 确保启用的数据库都有选择
+  const enabledDbsHaveSelection = (
+    (!databaseSwitches.value.cityEnabled || (switchForm.value.cityDb && switchForm.value.cityDb !== '')) &&
+    (!databaseSwitches.value.asnEnabled || (switchForm.value.asnDb && switchForm.value.asnDb !== '')) &&
+    (!databaseSwitches.value.countryEnabled || (switchForm.value.countryDb && switchForm.value.countryDb !== ''))
+  )
+
+  return (switchChanges || dbChanges) && hasAtLeastOneEnabled && enabledDbsHaveSelection
 })
 
 // 计算数据库状态类型
@@ -466,6 +544,144 @@ const getDatabaseStatusText = () => {
   if (loadedCount === 3) return '全部已加载'
   if (loadedCount === 0) return '未加载'
   return `部分已加载 (${loadedCount}/3)`
+}
+
+// 计算选择模式类型
+const getSelectionModeType = () => {
+  const { city_db, asn_db, country_db } = databaseInfo.value.current_databases || {}
+  const activeCount = [city_db, asn_db, country_db].filter(db => db && db !== '').length
+
+  if (activeCount === 3) return 'success'
+  if (activeCount === 1) return 'primary'
+  if (activeCount === 2) return 'warning'
+  return 'info'
+}
+
+// 计算选择模式文本
+const getSelectionModeText = () => {
+  const { city_db, asn_db, country_db } = databaseInfo.value.current_databases || {}
+  const activeDbs = []
+
+  if (city_db && city_db !== '') activeDbs.push('城市')
+  if (asn_db && asn_db !== '') activeDbs.push('ASN')
+  if (country_db && country_db !== '') activeDbs.push('国家')
+
+  if (activeDbs.length === 0) return '未选择'
+  if (activeDbs.length === 1) return `仅${activeDbs[0]}数据库`
+  if (activeDbs.length === 2) return `${activeDbs.join('+')}数据库`
+  return '全数据库模式'
+}
+
+// 数据库开关变化处理
+const onDatabaseSwitchChange = (dbType, enabled) => {
+  console.log(`🔄 数据库开关变化: ${dbType} -> ${enabled}`)
+
+  if (!enabled) {
+    // 关闭数据库时，清空对应的选择
+    if (dbType === 'city') {
+      switchForm.value.cityDb = ''
+    } else if (dbType === 'asn') {
+      switchForm.value.asnDb = ''
+    } else if (dbType === 'country') {
+      switchForm.value.countryDb = ''
+    }
+  } else {
+    // 开启数据库时，如果当前有对应的数据库，自动选择
+    if (dbType === 'city' && databaseInfo.value.current_databases?.city_db) {
+      switchForm.value.cityDb = databaseInfo.value.current_databases.city_db
+    } else if (dbType === 'asn' && databaseInfo.value.current_databases?.asn_db) {
+      switchForm.value.asnDb = databaseInfo.value.current_databases.asn_db
+    } else if (dbType === 'country' && databaseInfo.value.current_databases?.country_db) {
+      switchForm.value.countryDb = databaseInfo.value.current_databases.country_db
+    }
+  }
+
+  // 保存开关状态到本地存储
+  saveDatabaseSwitchesToStorage()
+}
+
+// 检查是否可以禁用某个数据库（确保至少有一个数据库启用）
+const canDisableDatabase = (dbType) => {
+  const enabledCount = Object.values(databaseSwitches.value).filter(Boolean).length
+  const currentDbEnabled = databaseSwitches.value[`${dbType}Enabled`]
+
+  // 如果当前数据库已经关闭，总是允许开启
+  if (!currentDbEnabled) {
+    return true
+  }
+
+  // 如果当前数据库开启，但只有一个数据库启用，不能禁用它
+  if (enabledCount <= 1) {
+    return false
+  }
+
+  return true
+}
+
+// 保存开关状态到本地存储
+const saveDatabaseSwitchesToStorage = () => {
+  const switchState = {
+    cityEnabled: databaseSwitches.value.cityEnabled,
+    asnEnabled: databaseSwitches.value.asnEnabled,
+    countryEnabled: databaseSwitches.value.countryEnabled,
+    timestamp: Date.now()
+  }
+  localStorage.setItem('database_switches_state', JSON.stringify(switchState))
+  console.log('💾 保存数据库开关状态到本地存储:', switchState)
+}
+
+// 从本地存储恢复开关状态
+const loadDatabaseSwitchesFromStorage = () => {
+  try {
+    const stored = localStorage.getItem('database_switches_state')
+    if (stored) {
+      const switchState = JSON.parse(stored)
+      // 检查存储的状态是否在24小时内（避免过期状态）
+      const isRecent = switchState.timestamp && (Date.now() - switchState.timestamp < 24 * 60 * 60 * 1000)
+
+      if (isRecent) {
+        console.log('📥 从本地存储恢复数据库开关状态:', switchState)
+        return {
+          cityEnabled: switchState.cityEnabled,
+          asnEnabled: switchState.asnEnabled,
+          countryEnabled: switchState.countryEnabled
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️ 恢复数据库开关状态失败:', error)
+  }
+  return null
+}
+
+// 根据当前数据库状态初始化开关
+const initializeDatabaseSwitches = () => {
+  const { city_db, asn_db, country_db } = databaseInfo.value.current_databases || {}
+
+  // 首先尝试从本地存储恢复用户设置
+  const storedSwitches = loadDatabaseSwitchesFromStorage()
+
+  if (storedSwitches) {
+    // 使用存储的开关状态
+    databaseSwitches.value.cityEnabled = storedSwitches.cityEnabled
+    databaseSwitches.value.asnEnabled = storedSwitches.asnEnabled
+    databaseSwitches.value.countryEnabled = storedSwitches.countryEnabled
+    console.log('🔄 使用存储的数据库开关状态:', databaseSwitches.value)
+  } else {
+    // 根据当前数据库状态初始化（首次访问或无存储状态）
+    databaseSwitches.value.cityEnabled = !!(city_db && city_db !== '')
+    databaseSwitches.value.asnEnabled = !!(asn_db && asn_db !== '')
+    databaseSwitches.value.countryEnabled = !!(country_db && country_db !== '')
+    console.log('🔄 根据当前数据库状态初始化开关:', databaseSwitches.value)
+  }
+
+  // 确保至少有一个开关启用
+  const enabledCount = Object.values(databaseSwitches.value).filter(Boolean).length
+  if (enabledCount === 0) {
+    // 如果所有开关都关闭，默认启用城市数据库
+    databaseSwitches.value.cityEnabled = true
+    console.log('⚠️ 所有开关都关闭，默认启用城市数据库')
+  }
 }
 
 // 方法
@@ -526,6 +742,9 @@ const refreshDatabaseInfo = async () => {
     const response = await api.get('/admin/system/database/info')
     console.log('✅ 数据库信息获取成功:', response.data)
     databaseInfo.value = response.data
+
+    // 根据当前数据库状态初始化开关
+    initializeDatabaseSwitches()
 
     // 同时获取详细数据库文件信息
     await fetchDetailedDatabaseInfo()
@@ -617,14 +836,39 @@ const switchDatabase = async () => {
     switching.value = true
 
     const requestData = {}
-    if (switchForm.value.cityDb && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) {
-      requestData.city_db_key = switchForm.value.cityDb
+
+    // 根据开关状态和选择构建请求数据
+    if (databaseSwitches.value.cityEnabled) {
+      if (switchForm.value.cityDb !== undefined && switchForm.value.cityDb !== databaseInfo.value.current_databases?.city_db) {
+        requestData.city_db_key = switchForm.value.cityDb || null
+      }
+    } else {
+      // 开关关闭，设置为null表示不使用
+      if (databaseInfo.value.current_databases?.city_db) {
+        requestData.city_db_key = null
+      }
     }
-    if (switchForm.value.asnDb && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) {
-      requestData.asn_db_key = switchForm.value.asnDb
+
+    if (databaseSwitches.value.asnEnabled) {
+      if (switchForm.value.asnDb !== undefined && switchForm.value.asnDb !== databaseInfo.value.current_databases?.asn_db) {
+        requestData.asn_db_key = switchForm.value.asnDb || null
+      }
+    } else {
+      // 开关关闭，设置为null表示不使用
+      if (databaseInfo.value.current_databases?.asn_db) {
+        requestData.asn_db_key = null
+      }
     }
-    if (switchForm.value.countryDb && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db) {
-      requestData.country_db_key = switchForm.value.countryDb
+
+    if (databaseSwitches.value.countryEnabled) {
+      if (switchForm.value.countryDb !== undefined && switchForm.value.countryDb !== databaseInfo.value.current_databases?.country_db) {
+        requestData.country_db_key = switchForm.value.countryDb || null
+      }
+    } else {
+      // 开关关闭，设置为null表示不使用
+      if (databaseInfo.value.current_databases?.country_db) {
+        requestData.country_db_key = null
+      }
     }
 
     const response = await api.post('/admin/system/database/switch', requestData)
@@ -637,6 +881,12 @@ const switchDatabase = async () => {
       switchForm.value.cityDb = ''
       switchForm.value.asnDb = ''
       switchForm.value.countryDb = ''
+
+      // 数据库切换成功后，保存当前开关状态
+      saveDatabaseSwitchesToStorage()
+
+      // 重新初始化开关状态（但保持用户设置的开关状态）
+      initializeDatabaseSwitches()
     } else {
       ElMessage.error(response.data.message)
     }
@@ -809,6 +1059,51 @@ onMounted(async () => {
 
 .el-divider {
   margin: 20px 0;
+}
+
+/* 不使用选项样式 */
+.no-use-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.no-use-text {
+  font-weight: 500;
+  color: #909399;
+}
+
+.no-use-desc {
+  font-size: 12px;
+  color: #c0c4cc;
+}
+
+/* 数据库开关样式 */
+.database-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.database-switch {
+  margin-right: 8px;
+}
+
+.label-text {
+  font-weight: 500;
+  color: #303133;
+}
+
+/* 禁用状态的选择器样式 */
+.el-select.is-disabled .el-input__inner {
+  background-color: #f5f7fa;
+  border-color: #e4e7ed;
+  color: #c0c4cc;
+  cursor: not-allowed;
+}
+
+.el-select.is-disabled .el-input__suffix {
+  color: #c0c4cc;
 }
 
 /* 响应式设计 */

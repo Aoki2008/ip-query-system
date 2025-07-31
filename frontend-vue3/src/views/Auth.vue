@@ -54,21 +54,21 @@
         <!-- 功能特色 -->
         <div class="auth-features">
           <div class="feature">
-            <div class="feature-icon">🌍</div>
+            <div class="feature-icon">●</div>
             <div class="feature-text">
               <h3>全球IP数据库</h3>
               <p>覆盖全球的IP地址信息</p>
             </div>
           </div>
           <div class="feature">
-            <div class="feature-icon">⚡</div>
+            <div class="feature-icon">●</div>
             <div class="feature-text">
               <h3>快速查询</h3>
               <p>毫秒级响应速度</p>
             </div>
           </div>
           <div class="feature">
-            <div class="feature-icon">📊</div>
+            <div class="feature-icon">●</div>
             <div class="feature-text">
               <h3>详细分析</h3>
               <p>提供丰富的地理位置信息</p>

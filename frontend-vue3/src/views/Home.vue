@@ -4,7 +4,7 @@
       <!-- 主标题区域 -->
       <div class="hero-section">
         <GlassContainer variant="card" class="hero-card">
-          <h1 class="hero-title">🌐 IP查询工具</h1>
+          <h1 class="hero-title">IP查询工具</h1>
           <p class="hero-subtitle">快速、准确、专业的IP地址查询服务</p>
           
           <!-- 当前IP显示功能已移除以提升性能 -->
@@ -14,7 +14,7 @@
       <!-- 快速查询区域 -->
       <div class="quick-query-section">
         <GlassContainer variant="card" class="query-card">
-          <h2>🚀 快速查询</h2>
+          <h2>快速查询</h2>
           
           <div class="query-tabs">
             <button 
@@ -76,11 +76,11 @@
                 rows="6"
               ></textarea>
               <div class="batch-actions">
-                <button 
+                <button
                   class="btn btn-secondary"
                   @click="importFile"
                 >
-                  📁 导入文件
+                  导入文件
                 </button>
                 <button 
                   class="btn btn-primary"
@@ -96,7 +96,7 @@
           <!-- 错误信息 -->
           <div v-if="errorMessage" class="error-message">
             <div class="error-content">
-              <span class="error-icon">⚠️</span>
+              <span class="error-icon">!</span>
               <span class="error-text">{{ errorMessage }}</span>
               <button class="error-close" @click="errorMessage = ''">×</button>
             </div>
@@ -108,13 +108,13 @@
       <div v-if="queryResults.length > 0" class="results-section">
         <GlassContainer variant="card" class="results-card">
           <div class="results-header">
-            <h2>📊 查询结果</h2>
+            <h2>查询结果</h2>
             <div class="results-actions">
               <button class="btn btn-secondary" @click="exportResults">
-                📤 导出结果
+                导出结果
               </button>
               <button class="btn btn-secondary" @click="clearResults">
-                🗑️ 清空结果
+                清空结果
               </button>
             </div>
           </div>
@@ -128,19 +128,19 @@
               <div class="result-ip">{{ result.ip }}</div>
               <div class="result-info">
                 <div class="result-location">
-                  🌍 {{ formatLocation(result) }}
+                  {{ formatLocation(result) }}
                 </div>
                 <div class="result-isp">
-                  🏢 {{ formatISP(result) }}
+                  {{ formatISP(result) }}
                 </div>
                 <div v-if="result.location && (result.location.latitude || result.location.longitude)" class="result-coordinates">
-                  📍 {{ result.location.latitude }}, {{ result.location.longitude }}
+                  坐标: {{ result.location.latitude }}, {{ result.location.longitude }}
                 </div>
                 <div v-if="result.location && result.location.timezone" class="result-timezone">
-                  🕐 {{ result.location.timezone }}
+                  时区: {{ result.location.timezone }}
                 </div>
                 <div v-if="result.query_time" class="result-time">
-                  ⚡ 查询耗时: {{ (result.query_time * 1000).toFixed(2) }}ms
+                  查询耗时: {{ (result.query_time * 1000).toFixed(2) }}ms
                 </div>
               </div>
             </div>
@@ -152,19 +152,19 @@
       <div class="features-section">
         <div class="features-grid">
           <GlassContainer variant="card" class="feature-card">
-            <div class="feature-icon">🔍</div>
+            <div class="feature-icon">●</div>
             <h3>精准查询</h3>
             <p>基于MaxMind数据库，提供准确的IP地理位置信息</p>
           </GlassContainer>
-          
+
           <GlassContainer variant="card" class="feature-card">
-            <div class="feature-icon">⚡</div>
+            <div class="feature-icon">●</div>
             <h3>批量处理</h3>
             <p>支持最多100个IP地址同时查询，提高工作效率</p>
           </GlassContainer>
-          
+
           <GlassContainer variant="card" class="feature-card">
-            <div class="feature-icon">📊</div>
+            <div class="feature-icon">●</div>
             <h3>数据导出</h3>
             <p>支持CSV、JSON、Excel多种格式导出查询结果</p>
           </GlassContainer>

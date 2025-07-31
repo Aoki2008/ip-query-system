@@ -22,7 +22,7 @@ import GlassContainer from '../components/GlassContainer.vue'
 
 const faqs = ref([
   {
-    question: '🔍 查询结果为什么显示"未知"？',
+    question: '查询结果为什么显示"未知"？',
     answer: `
       <p>可能的原因包括：</p>
       <ul>
@@ -34,7 +34,7 @@ const faqs = ref([
     `
   },
   {
-    question: '🌐 能否查询本机IP地址？',
+    question: '能否查询本机IP地址？',
     answer: `
       <p>可以！有以下几种方式：</p>
       <ul>
@@ -45,7 +45,7 @@ const faqs = ref([
     `
   },
   {
-    question: '📝 支持哪些IP地址格式？',
+    question: '支持哪些IP地址格式？',
     answer: `
       <p>目前支持以下格式：</p>
       <ul>

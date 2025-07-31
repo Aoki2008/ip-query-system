@@ -2,7 +2,7 @@
   <div class="ip-lookup-container">
     <div class="container">
       <GlassContainer variant="card" class="page-header">
-        <h1>🔍 IP查询</h1>
+        <h1>IP查询</h1>
         <p>专业的IP地址查询工具，支持单个和批量查询</p>
       </GlassContainer>
 
@@ -107,7 +107,7 @@
         <!-- 错误信息 -->
         <div v-if="errorMessage" class="error-message">
           <div class="error-content">
-            <span class="error-icon">⚠️</span>
+            <span class="error-icon">!</span>
             <span class="error-text">{{ errorMessage }}</span>
             <button class="error-close" @click="errorMessage = ''">×</button>
           </div>
@@ -118,16 +118,16 @@
       <div v-if="queryResults.length > 0" class="results-section">
         <GlassContainer variant="card">
           <div class="results-header">
-            <h2>📊 查询结果 ({{ queryResults.length }}条)</h2>
+            <h2>查询结果 ({{ queryResults.length }}条)</h2>
             <div class="results-actions">
               <button class="btn btn-secondary" @click="exportResults('csv')">
-                📄 导出CSV
+                导出CSV
               </button>
               <button class="btn btn-secondary" @click="exportResults('json')">
-                📋 导出JSON
+                导出JSON
               </button>
               <button class="btn btn-secondary" @click="clearResults">
-                🗑️ 清空结果
+                清空结果
               </button>
             </div>
           </div>
